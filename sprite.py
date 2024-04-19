@@ -15,4 +15,13 @@ class Sprite:
         self.w, self.h = self.surf.get_size()
 
     def draw(self, target, offset_x=0, offset_y=0):
-        target.blit(self.surf, (self.x - offset_x - self.w//2, self.y - offset_y - self.h//2))
+        target.blit(self.surf, (self.x - offset_x - self.w // 2, self.y - offset_y - self.h // 2))
+
+    def collide_point(self, point):
+        return abs(point[0] - self.x) < self.w // 2 and abs(point[1] - self.y) < self.h // 2
+
+    def collide_sprite(self, sprite):
+        return (self.collide_point((sprite.x + sprite.w // 2, sprite.y + sprite.h // 2)) or
+                self.collide_point((sprite.x - sprite.w // 2, sprite.y + sprite.h // 2)) or
+                self.collide_point((sprite.x + sprite.w // 2, sprite.y - sprite.h // 2)) or
+                self.collide_point((sprite.x - sprite.w // 2, sprite.y - sprite.h // 2)))

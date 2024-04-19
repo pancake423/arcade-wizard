@@ -1,5 +1,5 @@
 import pygame
-from sprite import Sprite
+from background import Background
 
 WIDTH, HEIGHT = 800, 600
 
@@ -9,7 +9,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption("CS 353 Final Project")
 
-test = Sprite("wizard.png", WIDTH//2, HEIGHT//2)
+bg = Background()
 
 # Main loop
 running = True
@@ -18,7 +18,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    test.draw(screen)
+    bg.draw(screen, WIDTH//-2, HEIGHT//-2)
 
     pygame.display.flip()
     clock.tick(60)
