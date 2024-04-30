@@ -1,6 +1,7 @@
 import pygame
 from background import Background
 from player import Player
+from zombie import ZombieManager
 
 WIDTH, HEIGHT = 1200, 800
 
@@ -12,12 +13,19 @@ pygame.display.set_caption("CS 353 Final Project")
 
 bg = Background()
 player = Player(WIDTH, HEIGHT, Background.width, Background.height)
+zombies = ZombieManager()
+zombies.spawn(0, 0, "normal")
+zombies.spawn(0, 0, "baby")
+zombies.spawn(0, 0, "giant")
+
 
 
 def draw():
-    bg.draw(screen, player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
+    offset = (player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
+    bg.draw(screen, *offset)
     player.draw(screen)
-    bg.draw_hedges(screen, player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
+    zombies.draw(screen, *offset)
+    bg.draw_hedges(screen, *offset)
 
 
 # Main loop
@@ -28,6 +36,7 @@ while running:
             running = False
 
     player.update()
+    zombies.update(player)
     draw()
 
     pygame.display.flip()
