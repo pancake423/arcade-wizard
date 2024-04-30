@@ -11,7 +11,14 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("CS 353 Final Project")
 
 bg = Background()
-player = Player(WIDTH, HEIGHT)
+player = Player(WIDTH, HEIGHT, Background.width, Background.height)
+
+
+def draw():
+    bg.draw(screen, player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
+    player.draw(screen)
+    bg.draw_hedges(screen, player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
+
 
 # Main loop
 running = True
@@ -21,8 +28,7 @@ while running:
             running = False
 
     player.update()
-    bg.draw(screen, player.x_pos-WIDTH//2, player.y_pos-WIDTH//2)
-    player.draw(screen)
+    draw()
 
     pygame.display.flip()
     clock.tick(60)

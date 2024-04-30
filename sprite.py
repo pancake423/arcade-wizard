@@ -11,17 +11,30 @@ class Sprite:
             self.surf = pygame.image.load(image_or_surface)
 
         self.surf_flip_h = pygame.transform.flip(self.surf, True, False)
-        self.flipped = False
+        self.flipped_h = False
+
+        self.surf_flip_v = pygame.transform.flip(self.surf, False, True)
+        self.surf_flip_both = pygame.transform.flip(self.surf, True, True)
+        self.flipped_v = False
 
         self.x = x
         self.y = y
         self.w, self.h = self.surf.get_size()
 
     def draw(self, target, offset_x=0, offset_y=0):
-        target.blit(
-            self.surf_flip_h if self.flipped else self.surf,
-            (self.x - offset_x - self.w // 2, self.y - offset_y - self.h // 2)
-        )
+        target.blit(self.get_surf(), (self.x - offset_x - self.w // 2, self.y - offset_y - self.h // 2))
+
+    def get_surf(self):
+        if self.flipped_v:
+            if self.flipped_h:
+                return self.surf_flip_both
+            else:
+                return self.surf_flip_v
+        else:
+            if self.flipped_h:
+                return self.surf_flip_h
+            else:
+                return self.surf
 
     def collide_point(self, point):
         return abs(point[0] - self.x) < self.w // 2 and abs(point[1] - self.y) < self.h // 2
