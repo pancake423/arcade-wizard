@@ -4,9 +4,9 @@ from random import randint, choice
 
 class Background:
     color = (72, 205, 37)
-    width = 1000  # px
-    height = 1000  # px
-    n_objects = 15
+    width = 5000  # px
+    height = 5000  # px
+    n_objects = 100
     opts = ["grass.png", "flower_red.png", "flower_yellow.png"]
 
     def __init__(self):
