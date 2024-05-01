@@ -18,8 +18,6 @@ zombies = ZombieManager()
 projectiles = ProjectileManager((Background.width, Background.height))
 graves = GravestoneManager(zombies)
 player = Player(WIDTH, HEIGHT, Background.width, Background.height, projectiles)
-for _ in range(4):
-    graves.spawn()
 
 
 def draw():
