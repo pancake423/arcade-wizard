@@ -2,13 +2,17 @@ import pygame
 from sprite import Sprite
 from math import sin, pi, floor, atan2
 from weapon import Weapon
+from health_bar import HealthBar
 
 
 class Player(Sprite):
     speed = 10
+    max_health = 100
+
     hop_size = 10
     hop_speed = 0.2
 
+    health_bar_color = (159, 251, 118)
 
     def __init__(self, w, h, bound_w, bound_h, proj):
         super().__init__('wizard.png', w//2, h//2)
@@ -21,8 +25,13 @@ class Player(Sprite):
         self.flipped_h = True
         self.proj = proj
         self.fire_cooldown = 0
+        self.health = Player.max_health
 
         self.set_bounds(bound_w, bound_h)
+
+    def draw(self, target, offset_x=0, offset_y=0, angle=0):
+        super().draw(target, offset_x, offset_y, angle)
+        HealthBar.draw(target, self, offset_x, offset_y, self.health / Player.max_health, Player.health_bar_color)
 
     def update(self):
         keys = pygame.key.get_pressed()

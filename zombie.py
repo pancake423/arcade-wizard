@@ -1,5 +1,6 @@
 from sprite import Sprite
 from math import atan2, dist, sin, cos
+from health_bar import HealthBar
 
 
 class ZombieStats:
@@ -17,6 +18,7 @@ class Zombie(Sprite):
     giant_stats = ZombieStats('zombie-giant.png', 3, 500, 20, 120)
 
     id_counter = 0
+    health_bar_color = (252, 88, 59)
 
     @staticmethod
     def get_stats(t):
@@ -48,8 +50,12 @@ class Zombie(Sprite):
         if self.cooldown > 0:
             self.cooldown -= 1
         if distance < self.w and self.cooldown == 0:
-            # apply attack
+            player.health -= self.stats.damage
             self.cooldown = self.stats.atk_cooldown
+
+    def draw(self, target, offset_x=0, offset_y=0, angle=0):
+        super().draw(target, offset_x, offset_y, angle)
+        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.stats.health, Zombie.health_bar_color)
 
 
 class ZombieManager:
@@ -63,7 +69,7 @@ class ZombieManager:
         need_kill = False
         for z in self.zombies:
             z.update(player)
-            if z.health < 0:
+            if z.health <= 0:
                 # de-spawn, give gold equal to z.stats.health
                 z.dead = True
                 need_kill = True
