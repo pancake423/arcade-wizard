@@ -2,6 +2,7 @@ from sprite import Sprite
 from math import atan2, dist, sin, cos
 from health_bar import HealthBar
 from particle import ParticleManager
+from shop import Shop
 from random import randint, uniform
 
 
@@ -106,7 +107,7 @@ class ZombieManager:
         for z in self.zombies:
             z.update(player, self.zombies)
             if z.health <= 0:
-                # de-spawn, give gold equal to z.stats.health
+                Shop.add_gold(z.stats.health)
                 z.dead = True
                 need_kill = True
         if need_kill:

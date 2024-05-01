@@ -33,6 +33,7 @@ class Projectile(Sprite):
                 self.has_hit.append(z.id)
                 self.pierce_remaining -= 1
                 z.health -= Weapon.damage
+                break  # only hit one zombie per frame
 
 
 class ProjectileManager:

@@ -4,10 +4,11 @@ from player import Player
 from zombie import ZombieManager
 from projectile import ProjectileManager
 from gravestone import GravestoneManager
-
-WIDTH, HEIGHT = 1200, 800
+from shop import Shop
 
 pygame.init()
+
+WIDTH, HEIGHT = 1200, 800
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
@@ -18,6 +19,7 @@ zombies = ZombieManager()
 projectiles = ProjectileManager((Background.width, Background.height))
 graves = GravestoneManager(zombies)
 player = Player(WIDTH, HEIGHT, Background.width, Background.height, projectiles)
+Shop.init(screen)
 
 
 def draw():
@@ -28,6 +30,7 @@ def draw():
     zombies.draw(screen, *offset)
     projectiles.draw(screen, *offset)
     bg.draw_hedges(screen, *offset)
+    Shop.draw_ui()
 
 
 # Main loop
@@ -41,6 +44,7 @@ while running:
     zombies.update(player)
     projectiles.update(zombies)
     graves.update()
+    Shop.tick()
     draw()
 
     pygame.display.flip()
