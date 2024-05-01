@@ -29,9 +29,9 @@ class Player(Sprite):
 
         self.set_bounds(bound_w, bound_h)
 
-    def draw(self, target, offset_x=0, offset_y=0, angle=0):
-        super().draw(target, offset_x, offset_y, angle)
-        HealthBar.draw(target, self, offset_x, offset_y, self.health / Player.max_health, Player.health_bar_color)
+    def draw(self, target):
+        super().draw(target)
+        HealthBar.draw(target, self, 0, 0, self.health / Player.max_health, Player.health_bar_color)
 
     def update(self):
         keys = pygame.key.get_pressed()

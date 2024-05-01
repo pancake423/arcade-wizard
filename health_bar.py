@@ -3,10 +3,10 @@ import pygame
 
 class HealthBar:
     bg_color = (0, 0, 0)
-    height = 10
+    height = 8
     width = 0.75
-    border_size = 2
-    gap = 10
+    border_size = 8
+    gap = 20
 
     @staticmethod
     def draw(target, sprite, offset_x, offset_y, percentage, color):
@@ -22,5 +22,5 @@ class HealthBar:
             x - (sprite.w // 2 * HealthBar.width), y - sprite.h // 2 - HealthBar.gap - HealthBar.height,
             (sprite.w * HealthBar.width) * percentage, HealthBar.height
         )
-        pygame.draw.rect(target, HealthBar.bg_color, outer_rect, border_radius=HealthBar.gap//2)
-        pygame.draw.rect(target, color, inner_rect, border_radius=HealthBar.gap // 2)
+        pygame.draw.rect(target, HealthBar.bg_color, outer_rect)
+        pygame.draw.rect(target, color, inner_rect)

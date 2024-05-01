@@ -5,6 +5,7 @@ from random import uniform, randint
 
 class Gravestone(Sprite):
     spawn_freq = 1080
+    spawn_rng = 120
     chance_normal = 0.6
     chance_baby = 0.3
     chance_giant = 0.1
@@ -12,14 +13,14 @@ class Gravestone(Sprite):
     particle_freq = 5  # particles only appear every [particle_freq] frames.
 
     def __init__(self, zombies, x, y, particles):
-        self.timer = Gravestone.spawn_freq
+        self.timer = 300  # 5 seconds before zombies start spawning
         self.zombies = zombies
         self.particles = particles
         super().__init__('gravestone.png', x, y)
 
     def update(self):
         if self.timer == 0:
-            self.timer = Gravestone.spawn_freq
+            self.timer = Gravestone.spawn_freq + randint(-Gravestone.spawn_rng, Gravestone.spawn_rng)
             self.spawn()
         if self.timer > 0:
             self.timer -= 1
