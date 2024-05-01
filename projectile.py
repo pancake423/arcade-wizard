@@ -27,17 +27,24 @@ class Projectile(Sprite):
 
 
 class ProjectileManager:
-    def __init__(self):
+    def __init__(self, bounds):
         self.projectiles = []
+        self.bounds = bounds
 
     def spawn_projectile(self, x, y, direction):
         self.projectiles.append(Projectile(x, y, direction))
+
+    def bounds_check(self, proj):
+        return (proj.x < self.bounds[0] // -2
+                or proj.x > self.bounds[0] // 2
+                or proj.y < self.bounds[1] // -2
+                or proj.y > self.bounds[1] // 2)
 
     def update(self, zombies):
         need_kill = False
         for p in self.projectiles:
             p.update(zombies)
-            if p.life_remaining <= 0 or p.pierce_remaining <= 0:
+            if p.life_remaining <= 0 or p.pierce_remaining <= 0 or self.bounds_check(p):
                 p.dead = True
                 need_kill = True
         if need_kill:

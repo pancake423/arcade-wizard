@@ -44,10 +44,18 @@ class Sprite:
                 return self.surf
 
     def collide_point(self, point):
-        return abs(point[0] - self.x) < self.w // 2 and abs(point[1] - self.y) < self.h // 2
+        return abs(point[0] - self.x) <= self.w // 2 and abs(point[1] - self.y) <= self.h // 2
 
     def collide_sprite(self, sprite):
-        return (self.collide_point((sprite.x + sprite.w // 2, sprite.y + sprite.h // 2)) or
-                self.collide_point((sprite.x - sprite.w // 2, sprite.y + sprite.h // 2)) or
-                self.collide_point((sprite.x + sprite.w // 2, sprite.y - sprite.h // 2)) or
-                self.collide_point((sprite.x - sprite.w // 2, sprite.y - sprite.h // 2)))
+        self_x_range = (self.x - self.w//2, self.x + self.w//2)
+        sprite_x_range = (sprite.x - sprite.w // 2, sprite.x + sprite.w // 2)
+        self_y_range = (self.y - self.h // 2, self.y + self.h // 2)
+        sprite_y_range = (sprite.y - sprite.h // 2, sprite.y + sprite.h // 2)
+
+        x_ok = (self_x_range[0] <= sprite_x_range[0] <= self_x_range[1]
+                or sprite_x_range[0] <= self_x_range[0] <= sprite_x_range[1])
+        y_ok = (self_y_range[0] <= sprite_y_range[0] <= self_y_range[1]
+                or sprite_y_range[0] <= self_y_range[0] <= sprite_y_range[1])
+
+        return x_ok and y_ok
+

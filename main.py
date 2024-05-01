@@ -3,6 +3,7 @@ from background import Background
 from player import Player
 from zombie import ZombieManager
 from projectile import ProjectileManager
+from gravestone import GravestoneManager
 
 WIDTH, HEIGHT = 1200, 800
 
@@ -14,16 +15,17 @@ pygame.display.set_caption("CS 353 Final Project")
 
 bg = Background()
 zombies = ZombieManager()
-projectiles = ProjectileManager()
+projectiles = ProjectileManager((Background.width, Background.height))
+graves = GravestoneManager(zombies)
 player = Player(WIDTH, HEIGHT, Background.width, Background.height, projectiles)
-zombies.spawn(0, 0, "normal")
-zombies.spawn(0, 0, "baby")
-zombies.spawn(0, 0, "giant")
+for _ in range(4):
+    graves.spawn()
 
 
 def draw():
     offset = (player.x_pos - WIDTH // 2, player.y_pos - HEIGHT // 2)
     bg.draw(screen, *offset)
+    graves.draw(screen, *offset)
     player.draw(screen)
     zombies.draw(screen, *offset)
     projectiles.draw(screen, *offset)
@@ -40,6 +42,7 @@ while running:
     player.update()
     zombies.update(player)
     projectiles.update(zombies)
+    graves.update()
     draw()
 
     pygame.display.flip()
