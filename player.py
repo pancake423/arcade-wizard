@@ -1,6 +1,7 @@
 import pygame
 from sprite import Sprite
-from math import sin, pi, floor
+from math import sin, pi, floor, atan2
+from weapon import Weapon
 
 
 class Player(Sprite):
@@ -8,7 +9,8 @@ class Player(Sprite):
     hop_size = 10
     hop_speed = 0.2
 
-    def __init__(self, w, h, bound_w, bound_h):
+
+    def __init__(self, w, h, bound_w, bound_h, proj):
         super().__init__('wizard.png', w//2, h//2)
         self.x_pos = 0
         self.y_pos = 0
@@ -17,6 +19,8 @@ class Player(Sprite):
         self.walk_frame = 0
         self.cycle_length = floor(pi / Player.hop_speed)
         self.flipped_h = True
+        self.proj = proj
+        self.fire_cooldown = 0
 
         self.set_bounds(bound_w, bound_h)
 
@@ -64,6 +68,14 @@ class Player(Sprite):
                 self.walk_animate(0)
         if self.walk_frame > self.cycle_length:
             self.walk_frame = 0
+
+        # shoot projectiles if mouse down
+        if self.fire_cooldown > 0:
+            self.fire_cooldown -= 1
+        if pygame.mouse.get_pressed()[0] and self.fire_cooldown == 0:
+            self.fire_cooldown = Weapon.fire_rate
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            self.proj.spawn_projectile(self.x_pos, self.y_pos, atan2(mouse_y - self.center_y, mouse_x - self.center_x))
 
     def walk_animate(self, frame):
         self.y = self.center_y - abs(sin(frame * Player.hop_speed)) * Player.hop_size

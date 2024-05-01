@@ -16,6 +16,8 @@ class Zombie(Sprite):
     normal_stats = ZombieStats('zombie-normal.png', 5, 100, 5, 60)
     giant_stats = ZombieStats('zombie-giant.png', 3, 500, 20, 120)
 
+    id_counter = 0
+
     @staticmethod
     def get_stats(t):
         if t == "baby":
@@ -30,6 +32,8 @@ class Zombie(Sprite):
         self.cooldown = self.stats.atk_cooldown
         self.health = self.stats.health
         self.dead = False
+        self.id = Zombie.id_counter
+        Zombie.id_counter += 1
         super().__init__(self.stats.image, x, y)
 
     def update(self, player):

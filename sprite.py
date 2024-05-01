@@ -1,4 +1,5 @@
 import pygame
+from math import pi
 
 
 class Sprite:
@@ -21,8 +22,14 @@ class Sprite:
         self.y = y
         self.w, self.h = self.surf.get_size()
 
-    def draw(self, target, offset_x=0, offset_y=0):
-        target.blit(self.get_surf(), (self.x - offset_x - self.w // 2, self.y - offset_y - self.h // 2))
+    def draw(self, target, offset_x=0, offset_y=0, angle=0):
+        surf = self.get_surf()
+        if angle == 0:
+            target.blit(surf, (self.x - offset_x - self.w // 2, self.y - offset_y - self.h // 2))
+        else:
+            surf = pygame.transform.rotate(surf, angle * 180/-pi)
+            w, h = surf.get_size()
+            target.blit(surf, (self.x - offset_x - w // 2, self.y - offset_y - h // 2))
 
     def get_surf(self):
         if self.flipped_v:

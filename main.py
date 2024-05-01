@@ -2,6 +2,7 @@ import pygame
 from background import Background
 from player import Player
 from zombie import ZombieManager
+from projectile import ProjectileManager
 
 WIDTH, HEIGHT = 1200, 800
 
@@ -12,12 +13,12 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("CS 353 Final Project")
 
 bg = Background()
-player = Player(WIDTH, HEIGHT, Background.width, Background.height)
 zombies = ZombieManager()
+projectiles = ProjectileManager()
+player = Player(WIDTH, HEIGHT, Background.width, Background.height, projectiles)
 zombies.spawn(0, 0, "normal")
 zombies.spawn(0, 0, "baby")
 zombies.spawn(0, 0, "giant")
-
 
 
 def draw():
@@ -25,6 +26,7 @@ def draw():
     bg.draw(screen, *offset)
     player.draw(screen)
     zombies.draw(screen, *offset)
+    projectiles.draw(screen, *offset)
     bg.draw_hedges(screen, *offset)
 
 
@@ -37,6 +39,7 @@ while running:
 
     player.update()
     zombies.update(player)
+    projectiles.update(zombies)
     draw()
 
     pygame.display.flip()
