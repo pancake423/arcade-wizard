@@ -37,8 +37,8 @@ class Projectile(Sprite):
                 if Weapon.shock_radius > 0:
                     for z_shock in zombies.zombies:
                         distance = dist((self.x, self.y), (z_shock.x, z_shock.y))
-                        if distance <= Weapon.shock_radius:
-                            z.health -= Weapon.shock_damage
+                        if distance <= Weapon.shock_radius and z_shock.id != z.id:
+                            z_shock.health -= Weapon.shock_damage
                             self.particles.spawn(
                                 Weapon.particle_type,
                                 z_shock.x + randint(-z_shock.w // 2, z_shock.w // 2),
@@ -49,7 +49,7 @@ class Projectile(Sprite):
                     z.slow_tick = Weapon.slow_duration
                 if Weapon.burn_duration > 0:
                     z.fire_tick = Weapon.burn_duration
-                z.stun_tick = Weapon.damage + Weapon.burn_damage + Weapon.shock_damage
+                z.stun_tick = Weapon.damage + Weapon.burn_damage*3 + Weapon.shock_damage
                 break  # only hit one zombie per frame
 
 

@@ -41,9 +41,9 @@ class Gravestone(Sprite):
 
 
 class GravestoneManager:
-    spawnable_area = (4800, 4800)
+    spawnable_area = (5500, 5500)
     init_graves = 4
-    grave_freq = 3600
+    grave_freq = 2400
 
     def __init__(self, zombies):
         self.gravestones = []
@@ -90,5 +90,6 @@ class GravestoneManager:
 
     def reset(self):
         self.gravestones = []
+        self.grave_cooldown = GravestoneManager.grave_freq
         for _ in range(GravestoneManager.init_graves):
             self.spawn()

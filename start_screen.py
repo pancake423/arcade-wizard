@@ -20,9 +20,9 @@ def init(c, t):
     global title_2
     global button
     global target
-    title_1 = Label(550, 100, "Wizard", 100, True, background_color=(255, 255, 255, 128))
-    title_2 = Label(650, 220, "Arcade", 100, True, background_color=(255, 255, 255, 128))
-    button = Button(600, 700, 250, 75, "Start", callback=c)
+    title_1 = Label(575, 100, "Wizard", 140, True, background_color=(0, 0, 0, 64))
+    title_2 = Label(625, 280, "Arcade", 140, True, background_color=(0, 0, 0, 64))
+    button = Button(600, 700, 250, 75, "Start", callback=c, textcolor="white")
     target = t
 
 
@@ -42,6 +42,6 @@ def step():
 def random_wizard_animation():
     d = -1 if randint(0, 1) == 1 else 1
     height = randint(100, 700)
-    particles.spawn('wizard.png', -100 if d == 1 else 1300, height, mx=d*9, lifespan=200)
+    particles.spawn('wizard-1.png', -100 if d == 1 else 1300, height, mx=d*9, lifespan=200)
     particles.spawn('zombie-normal.png', -300 if d == 1 else 1500, height+15, mx=d*8, lifespan=200)
 

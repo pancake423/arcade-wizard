@@ -2,10 +2,12 @@ import pygame
 from button import Button
 from label import Label
 from weapon import Weapon
+from math import ceil
 
 
 class Shop:
-    gold = None
+    easter_egg = True
+    gold = 200
     time_alive = None
     margin = None
     font = None
@@ -33,6 +35,8 @@ class Shop:
     weapon_label = None
     elemental_label = None
     inner_rect = None
+    text = None
+    discount = 0
 
     fire_cost = 0
     ice_cost = 0
@@ -45,8 +49,11 @@ class Shop:
 
     @staticmethod
     def init(target):
-        Shop.gold = 0
+        Shop.gold = 200
         Shop.time_alive = 0
+        Shop.easter_egg = True
+        Shop.discount = 0
+        Shop.text = None
 
         Shop.margin = 25
         Shop.font = pygame.font.Font("basis33.ttf", 75)
@@ -57,33 +64,34 @@ class Shop:
         Shop.clock = pygame.transform.scale_by(Shop.clock, 0.75)
         Shop.clock_rect = pygame.Rect(800, 25, *Shop.clock.get_size())
         Shop.target = target
-        Shop.shop_button = Button(600, 63, 150, 75, "Shop", (0, 0, 0, 128), (50, 50, 50, 128), Shop.toggle)
+        Shop.shop_button = Button(600, 63, 150, 75, "Shop", (0, 0, 0, 64), (50, 50, 50, 128), Shop.toggle)
         Shop.shop_close_button = Button(1150, 150, 45, 45, "x", (249, 53, 90), (251, 114, 138), Shop.toggle)
         Shop.shop_bg = pygame.Surface((1100, 550), pygame.SRCALPHA)
-        Shop.shop_bg.fill((0, 0, 0, 128))
+        Shop.shop_bg.fill((100, 100, 100))
         Shop.inner_rect = pygame.Surface((500, 450), pygame.SRCALPHA)
-        Shop.inner_rect.fill((15, 94, 203))
+        Shop.inner_rect.fill((80, 80, 80))
 
-        Shop.buy_pierce = Button(500, 350, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.pierce)
-        Shop.buy_damage = Button(500, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.damage)
-        Shop.buy_speed = Button(500, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.speed)
-        Shop.buy_fire = Button(1050, 350, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.fire)
-        Shop.buy_ice = Button(1050, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.ice)
-        Shop.buy_electric = Button(1050, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.electric)
-        Shop.pierce_label = Label(100, 350, "Pierce ($200)", fontsize=40)
-        Shop.damage_label = Label(100, 450, "Damage ($200)", fontsize=40)
-        Shop.speed_label = Label(100, 550, "Speed ($200)", fontsize=40)
-        Shop.fire_label = Label(650, 350, "Fire ($200)", fontsize=40)
-        Shop.ice_label = Label(650, 450, "Ice ($200)", fontsize=40)
-        Shop.electric_label = Label(650, 550, "Electric ($200)", fontsize=40)
-        Shop.weapon_label = Label(325, 250, "Weapon Upgrades", centered=True)
-        Shop.elemental_label = Label(875, 250, "Elemental Upgrades", centered=True)
+        Shop.buy_pierce = Button(500, 350, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.pierce, textcolor="white")
+        Shop.buy_damage = Button(500, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.damage, textcolor="white")
+        Shop.buy_speed = Button(500, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.speed, textcolor="white")
+        Shop.buy_fire = Button(1050, 350, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.fire, textcolor="white")
+        Shop.buy_ice = Button(1050, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.ice, textcolor="white")
+        Shop.buy_electric = Button(1050, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.electric, textcolor="white")
+        Shop.pierce_label = Label(100, 350, "Pierce ($200)", fontsize=40, textcolor="white")
+        Shop.damage_label = Label(100, 450, "Damage ($200)", fontsize=40, textcolor="white")
+        Shop.speed_label = Label(100, 550, "Speed ($200)", fontsize=40, textcolor="white")
+        Shop.fire_label = Label(650, 350, "Fire ($200)", fontsize=40, textcolor="white")
+        Shop.ice_label = Label(650, 450, "Ice ($200)", fontsize=40, textcolor="white")
+        Shop.electric_label = Label(650, 550, "Electric ($200)", fontsize=40, textcolor="white")
+        Shop.weapon_label = Label(325, 250, "Weapon Upgrades", centered=True, textcolor="white")
+        Shop.elemental_label = Label(875, 250, "Elemental Upgrades", centered=True, textcolor="white")
         Shop.fire_cost = 200
         Shop.ice_cost = 200
         Shop.electric_cost = 200
         Shop.pierce_cost = 200
         Shop.damage_cost = 200
         Shop.speed_cost = 200
+        Shop.cost_mult = 1.5
 
     @staticmethod
     def add_gold(amt):
@@ -95,6 +103,9 @@ class Shop:
             Shop.is_open = False
         else:
             Shop.is_open = True
+            Shop.pierce_label.relabel(f"Pierce (${Shop.pierce_cost})")
+            Shop.damage_label.relabel(f"Damage (${Shop.damage_cost})")
+            Shop.speed_label.relabel(f"Speed (${Shop.speed_cost})")
 
     @staticmethod
     def tick():
@@ -102,8 +113,8 @@ class Shop:
         Shop.shop_button.update()
 
     @staticmethod
-    def time_as_string():
-        seconds = Shop.time_alive // 60
+    def time_as_string(t=None):
+        seconds = Shop.time_alive // 60 if t is None else t // 60
         minutes = seconds // 60
         hours = minutes // 60
         seconds %= 60
@@ -120,6 +131,8 @@ class Shop:
             Shop.coin_rect.right + Shop.margin,
             Shop.coin_rect.centery - 32
         ))
+        if Shop.text is not None:
+            Shop.text.draw(Shop.target)
 
         shop_text = Shop.font.render(Shop.time_as_string(), False, "Black")
         start = 1200 - shop_text.get_width() - Shop.clock_rect.width - Shop.margin*2
@@ -153,6 +166,11 @@ class Shop:
         Shop.elemental_label.draw(target)
 
     @staticmethod
+    def scale_cost(cost):
+        Shop.easter_egg = False
+        return ceil(Shop.cost_mult * cost / 50) * 50
+
+    @staticmethod
     def update_shop():
         Shop.shop_close_button.update()
         Shop.shop_button.update()
@@ -167,7 +185,7 @@ class Shop:
     def pierce():
         if Shop.gold >= Shop.pierce_cost:
             Shop.gold -= Shop.pierce_cost
-            Shop.pierce_cost = round(Shop.cost_mult * Shop.pierce_cost)
+            Shop.pierce_cost = Shop.scale_cost(Shop.pierce_cost)
             Shop.pierce_label.relabel(f"Pierce (${Shop.pierce_cost})")
             Weapon.pierce += 1
 
@@ -175,28 +193,28 @@ class Shop:
     def damage():
         if Shop.gold >= Shop.damage_cost:
             Shop.gold -= Shop.damage_cost
-            Shop.damage_cost = round(Shop.cost_mult * Shop.damage_cost)
+            Shop.damage_cost = Shop.scale_cost(Shop.damage_cost)
             Shop.damage_label.relabel(f"Damage (${Shop.damage_cost})")
-            Weapon.damage += 3
+            Weapon.damage += 2
 
     @staticmethod
     def speed():
         if Shop.gold >= Shop.speed_cost:
             Shop.gold -= Shop.speed_cost
-            Shop.speed_cost = round(Shop.cost_mult * Shop.speed_cost)
+            Shop.speed_cost = Shop.scale_cost(Shop.speed_cost)
             Shop.speed_label.relabel(f"Speed (${Shop.speed_cost})")
-            Weapon.fire_rate = round(Weapon.fire_rate * 0.8)
+            Weapon.fire_rate = round(Weapon.fire_rate * 0.92)
 
     @staticmethod
     def fire():
         if Shop.gold >= Shop.fire_cost:
             Shop.gold -= Shop.fire_cost
-            Shop.fire_cost = round(Shop.cost_mult * Shop.fire_cost)
+            Shop.fire_cost = Shop.scale_cost(Shop.fire_cost)
             Shop.fire_label.relabel(f"Fire (${Shop.fire_cost})")
             Weapon.proj_type = 'bolt-fire.png'
             Weapon.particle_type = 'particle-fire.png'
-            Weapon.burn_damage += 1
-            Weapon.burn_duration += 60
+            Weapon.burn_damage += 0.75
+            Weapon.burn_duration = 120
             Shop.buy_electric.lock()
             Shop.buy_ice.lock()
 
@@ -204,12 +222,12 @@ class Shop:
     def ice():
         if Shop.gold >= Shop.ice_cost:
             Shop.gold -= Shop.ice_cost
-            Shop.ice_cost = round(Shop.cost_mult * Shop.ice_cost)
+            Shop.ice_cost = Shop.scale_cost(Shop.ice_cost)
             Shop.ice_label.relabel(f"Ice (${Shop.ice_cost})")
             Weapon.proj_type = 'bolt-ice.png'
             Weapon.particle_type = 'particle-ice.png'
-            Weapon.slow_amount *= 0.8
-            Weapon.slow_duration += 60
+            Weapon.slow_amount = 0.5
+            Weapon.slow_duration += 10
             Shop.buy_fire.lock()
             Shop.buy_electric.lock()
 
@@ -217,13 +235,24 @@ class Shop:
     def electric():
         if Shop.gold >= Shop.electric_cost:
             Shop.gold -= Shop.electric_cost
-            Shop.electric_cost = round(Shop.cost_mult * Shop.electric_cost)
+            Shop.electric_cost = Shop.scale_cost(Shop.electric_cost)
             Shop.electric_label.relabel(f"Electric (${Shop.electric_cost})")
             Weapon.proj_type = 'bolt-electric.png'
             Weapon.particle_type = 'particle-electric.png'
-            Weapon.shock_damage += 3
-            Weapon.shock_radius += 50
+            Weapon.shock_damage += 2
+            Weapon.shock_radius = 100
             Shop.buy_fire.lock()
             Shop.buy_ice.lock()
 
-
+    @staticmethod
+    def ee_text():
+        Shop.discount += 1
+        if Shop.discount == 1:
+            Shop.text = Label(
+                25, 750, "Your persistence is admirable. 25% off.",
+                background_color=(0, 0, 0, 128), fontsize=25
+            )
+        elif Shop.discount == 2:
+            Shop.text.relabel("Still alive, huh. How about 50% off?")
+        elif Shop.discount == 3:
+            Shop.text.relabel("Most impressive! 75% off for you!")

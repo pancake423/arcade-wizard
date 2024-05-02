@@ -6,8 +6,10 @@ from projectile import ProjectileManager
 from gravestone import GravestoneManager
 from shop import Shop
 from weapon import Weapon
+from label import Label
 import start_screen
 import death_screen
+import pause_menu
 
 pygame.init()
 
@@ -67,29 +69,46 @@ def reset():
 
 
 start_screen.init(start, screen)
+pause_menu.init(screen)
+
 # Main loop
 running = True
+paused = False
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.ACTIVEEVENT and state == GAME:
+            if event.state != 1:  # event.gain != 1 or
+                print(event.state)
+                paused = True
+        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+            paused = False if paused else True
+        if event.type == pygame.KEYUP and event.key == pygame.K_e:
+            Shop.toggle()
     if state == START_SCREEN:
         start_screen.step()
     elif state == GAME and fade_timer < 60:
         draw()
-        if not Shop.is_open:
-            Shop.tick()
-            player.update()
-            zombies.update(player)
-            projectiles.update(zombies)
-            graves.update()
-            if player.health <= 0:
-                death_screen.init(reset, screen)
-                new_state = RESTART_SCREEN
-                fade_timer = 120
+        if paused:
+            if Shop.is_open:
+                Shop.draw_shop(screen)
+            pause_menu.draw()
         else:
-            Shop.update_shop()
-            Shop.draw_shop(screen)
+            if not Shop.is_open:
+                Shop.tick()
+                player.update()
+                zombies.update(player)
+                projectiles.update(zombies)
+                graves.update()
+                if player.health <= 0:
+                    death_screen.init(reset, screen, Shop.time_alive)
+                    new_state = RESTART_SCREEN
+                    fade_timer = 120
+            else:
+                Shop.update_shop()
+                Shop.draw_shop(screen)
     elif state == RESTART_SCREEN:
         death_screen.step()
 

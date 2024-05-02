@@ -2,16 +2,17 @@ import pygame
 
 
 class Label:
-    def __init__(self, x, y, text, fontsize=50, centered=False, background_color=(0, 0, 0, 0), padding=10):
+    def __init__(self, x, y, text, fontsize=50, centered=False, background_color=(0, 0, 0, 0), padding=10, textcolor="black"):
         self.x = x
         self.y = y
         self.centered = centered
         self.font = pygame.font.Font('basis33.ttf', fontsize)
-        self.surf = self.font.render(text, False, "black")
+        self.surf = self.font.render(text, False, textcolor)
         self.rect = pygame.Rect(0, 0, *self.surf.get_size())
         self.rect.centery = y
         self.rect.left = x
         self.bg = None
+        self.textcolor = textcolor
         if self.centered:
             self.rect.centerx = x
         self.padding = padding
@@ -21,7 +22,7 @@ class Label:
 
 
     def relabel(self, new_text):
-        self.surf = self.font.render(new_text, False, "black")
+        self.surf = self.font.render(new_text, False, self.textcolor)
         self.rect = pygame.Rect(0, 0, *self.surf.get_size())
         self.rect.centery = self.y
         self.rect.left = self.x

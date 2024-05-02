@@ -5,6 +5,7 @@ from particle import ParticleManager
 from shop import Shop
 from random import randint, uniform
 from weapon import Weapon
+from copy import copy
 
 
 class ZombieStats:
@@ -34,13 +35,13 @@ class Zombie(Sprite):
     @staticmethod
     def get_stats(t):
         if t == "baby":
-            return Zombie.baby_stats
+            return copy(Zombie.baby_stats)
         if t == "normal":
-            return Zombie.normal_stats
+            return copy(Zombie.normal_stats)
         if t == "giant":
-            return Zombie.giant_stats
+            return copy(Zombie.giant_stats)
 
-    def __init__(self, x, y, t, particles, scale):
+    def __init__(self, x, y, t, particles, scale=1):
         self.stats = Zombie.get_stats(t)
         self.cooldown = self.stats.atk_cooldown
         self.health = self.stats.health
@@ -54,8 +55,9 @@ class Zombie(Sprite):
         self.stun_tick = 0
         Zombie.id_counter += 1
 
-        self.health *= scale * scale
-        self.stats.speed *= min(sqrt(scale), 9.5 if t != "baby" else 10.5)
+        self.health *= scale ** 5
+        self.max_health = self.health
+        self.stats.speed = min(self.stats.speed * sqrt(scale), 9.5 if t != "baby" else 10.5)
 
         super().__init__(self.stats.image, x, y)
 
@@ -76,7 +78,7 @@ class Zombie(Sprite):
                 )
         if self.stun_tick > 0:
             self.stun_tick -= 1
-            move_dist *= 0.5
+            move_dist *= 0.7
 
         if self.fire_tick > 0:
             self.fire_tick -= 1
@@ -100,10 +102,10 @@ class Zombie(Sprite):
         if self.cooldown > 0:
             self.cooldown -= 1
         if distance < self.w * Zombie.bite_radius and self.cooldown == 0:
-            player.health -= self.stats.damage
+            player.damage(self.stats.damage)
             self.particles.spawn(
                 'bite-effect.png',
-                player.x_pos + randint(-player.w//2, player.w//2), player.y_pos + randint(-player.h//2, player.h//2),
+                player.x_pos + randint(-player.sprite.w//2, player.sprite.w//2), player.y_pos + randint(-player.sprite.h//2, player.sprite.h//2),
                 lifespan=30, fadeout=True
             )
             self.cooldown = self.stats.atk_cooldown
@@ -122,7 +124,7 @@ class Zombie(Sprite):
 
     def draw(self, target, offset_x=0, offset_y=0):
         super().draw(target, offset_x, offset_y, angle=self.angle)
-        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.stats.health, Zombie.health_bar_color)
+        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.max_health, Zombie.health_bar_color)
 
 
 class ZombieManager:
