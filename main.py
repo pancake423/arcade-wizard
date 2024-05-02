@@ -39,13 +39,16 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    player.update()
-    zombies.update(player)
-    projectiles.update(zombies)
-    graves.update()
-    Shop.tick()
     draw()
+    if not Shop.is_open:
+        Shop.tick()
+        player.update()
+        zombies.update(player)
+        projectiles.update(zombies)
+        graves.update()
+    else:
+        Shop.update_shop()
+        Shop.draw_shop(screen)
 
     pygame.display.flip()
     clock.tick(60)

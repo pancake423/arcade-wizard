@@ -3,6 +3,7 @@ from sprite import Sprite
 from math import sin, pi, floor, atan2
 from weapon import Weapon
 from health_bar import HealthBar
+from shop import Shop
 
 
 class Player(Sprite):
@@ -81,7 +82,7 @@ class Player(Sprite):
         # shoot projectiles if mouse down
         if self.fire_cooldown > 0:
             self.fire_cooldown -= 1
-        if pygame.mouse.get_pressed()[0] and self.fire_cooldown == 0:
+        if pygame.mouse.get_pressed()[0] and self.fire_cooldown == 0 and not Shop.shop_button.primed:
             self.fire_cooldown = Weapon.fire_rate
             mouse_x, mouse_y = pygame.mouse.get_pos()
             self.proj.spawn_projectile(self.x_pos, self.y_pos, atan2(mouse_y - self.center_y, mouse_x - self.center_x))
