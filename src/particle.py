@@ -1,4 +1,4 @@
-from sprite import Sprite
+from src.sprite import Sprite
 
 
 class Particle(Sprite):

@@ -1,4 +1,4 @@
-from label import Label
+from src.label import Label
 import pygame
 
 paused_labels = None

@@ -1,10 +1,10 @@
-from sprite import Sprite
+from src.sprite import Sprite
 from math import atan2, dist, sin, cos, sqrt
-from health_bar import HealthBar
-from particle import ParticleManager
-from shop import Shop
+from src.health_bar import HealthBar
+from src.particle import ParticleManager
+from src.shop import Shop
 from random import randint, uniform
-from weapon import Weapon
+from src.weapon import Weapon
 from copy import copy
 
 
@@ -18,9 +18,9 @@ class ZombieStats:
 
 
 class Zombie(Sprite):
-    baby_stats = ZombieStats('zombie-baby.png', 7, 50, 5, 30)
-    normal_stats = ZombieStats('zombie-normal.png', 5, 100, 5, 60)
-    giant_stats = ZombieStats('zombie-giant.png', 3, 500, 20, 120)
+    baby_stats = ZombieStats('src/zombie-baby.png', 7, 50, 5, 30)
+    normal_stats = ZombieStats('src/zombie-normal.png', 5, 100, 5, 60)
+    giant_stats = ZombieStats('src/zombie-giant.png', 3, 500, 20, 120)
 
     bite_radius = 1.5
     repel_radius = 100
@@ -71,7 +71,7 @@ class Zombie(Sprite):
             move_dist *= Weapon.slow_amount
             if self.slow_tick % Weapon.fire_tickrate == 0:
                 self.particles.spawn(
-                    'particle-ice.png',
+                    'src/particle-ice.png',
                     self.x + randint(-self.w // 2, self.w // 2),
                     self.y + randint(-self.h // 2, self.h // 2),
                     lifespan=30, fadeout=True, mr=0.1
@@ -85,7 +85,7 @@ class Zombie(Sprite):
             if self.fire_tick % Weapon.fire_tickrate == 0:
                 self.health -= Weapon.burn_damage
                 self.particles.spawn(
-                    'particle-fire.png',
+                    'src/particle-fire.png',
                     self.x + randint(-self.w // 2, self.w // 2),
                     self.y + randint(-self.h // 2, self.h // 2),
                     lifespan=30, fadeout=True, mr=0.1
@@ -104,7 +104,7 @@ class Zombie(Sprite):
         if distance < self.w * Zombie.bite_radius and self.cooldown == 0:
             player.damage(self.stats.damage)
             self.particles.spawn(
-                'bite-effect.png',
+                'src/bite-effect.png',
                 player.x_pos + randint(-player.sprite.w//2, player.sprite.w//2), player.y_pos + randint(-player.sprite.h//2, player.sprite.h//2),
                 lifespan=30, fadeout=True
             )

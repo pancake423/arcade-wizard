@@ -1,10 +1,10 @@
 import pygame
-from sprite import Sprite
+from src.sprite import Sprite
 from math import sin, pi, floor, atan2
-from weapon import Weapon
-from health_bar import HealthBar
-from shop import Shop
-from particle import ParticleManager
+from src.weapon import Weapon
+from src.health_bar import HealthBar
+from src.shop import Shop
+from src.particle import ParticleManager
 from random import randint, uniform
 
 
@@ -21,7 +21,7 @@ class Player:
     health_bar_color = (159, 251, 118)
 
     def __init__(self, w, h, bound_w, bound_h, proj):
-        self.sprite = Sprite('wizard-1.png', w//2, h//2)
+        self.sprite = Sprite('src/wizard-1.png', w//2, h//2)
         self.x_pos = 0
         self.y_pos = 0
         self.center_x = w//2
@@ -106,13 +106,13 @@ class Player:
         if t % 60 == 0:
             self.add_sparkle()
         if Shop.time_alive == 60 * 60 * 5:
-            self.set_image("wizard-2.png")
+            self.set_image("src/wizard-2.png")
             self.survival_buff()
         if Shop.time_alive == 60 * 60 * 10:
-            self.set_image("wizard-3.png")
+            self.set_image("src/wizard-3.png")
             self.survival_buff()
         if Shop.time_alive == 60 * 60 * 15:
-            self.set_image("wizard-4.png")
+            self.set_image("src/wizard-4.png")
             self.survival_buff()
         self.particles.update()
 
@@ -126,8 +126,8 @@ class Player:
             Shop.damage_cost -= 50
             Shop.speed_cost -= 50
             Shop.cost_mult -= 0.1
-            Weapon.proj_type = 'bolt-secret.png'
-            Weapon.particle_type = 'particle-secret.png'
+            Weapon.proj_type = 'src/bolt-secret.png'
+            Weapon.particle_type = 'src/particle-secret.png'
         self.add_sparkle(50, 10, 90)
         Weapon.damage += 10
         Weapon.pierce += 2
@@ -155,7 +155,7 @@ class Player:
         self.x_pos = 0
         self.y_pos = 0
         self.health = Player.max_health
-        self.set_image('wizard-1.png')
+        self.set_image('src/wizard-1.png')
         Player.speed = 10
 
     def damage(self, amt):

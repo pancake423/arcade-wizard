@@ -1,15 +1,15 @@
 import pygame
-from background import Background
-from player import Player
-from zombie import ZombieManager
-from projectile import ProjectileManager
-from gravestone import GravestoneManager
-from shop import Shop
-from weapon import Weapon
-from label import Label
-import start_screen
-import death_screen
-import pause_menu
+from src.background import Background
+from src.player import Player
+from src.zombie import ZombieManager
+from src.projectile import ProjectileManager
+from src.gravestone import GravestoneManager
+from src.shop import Shop
+from src.weapon import Weapon
+from src.label import Label
+import src.start_screen as start_screen
+import src.death_screen as death_screen
+import src.pause_menu as pause_menu
 
 pygame.init()
 
@@ -17,7 +17,9 @@ WIDTH, HEIGHT = 1200, 800
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
-pygame.display.set_caption("CS 353 Final Project")
+pygame.display.set_caption("Wizard Arcade")
+pygame_icon = pygame.image.load('src/wizard-head.png')
+pygame.display.set_icon(pygame_icon)
 
 bg = Background()
 zombies = ZombieManager()

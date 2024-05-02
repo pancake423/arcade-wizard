@@ -1,8 +1,8 @@
-from button import Button
-from label import Label
-from background import Background
-from shop import Shop
-from sprite import Sprite
+from src.button import Button
+from src.label import Label
+from src.background import Background
+from src.shop import Shop
+from src.sprite import Sprite
 
 target = None
 title = None
@@ -33,7 +33,7 @@ def init(c, t, raw_score):
         50, False, background_color=(0, 0, 0, 64))
     button = Button(600, 700, 400, 75, "Play Again?", callback=c, textcolor="white")
     target = t
-    skull = Sprite("dead-wizard.png", 600, 525)
+    skull = Sprite("src/dead-wizard.png", 600, 525)
 
 def step():
     bg.draw(target)

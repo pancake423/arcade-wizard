@@ -1,4 +1,4 @@
-from sprite import Sprite
+from src.sprite import Sprite
 from random import randint, choice
 import pygame
 
@@ -9,7 +9,7 @@ class Background:
     width = 5000  # px
     height = 5000  # px
     n_objects = 150
-    opts = ["grass.png", "flower_red.png", "flower_yellow.png"]
+    opts = ["src/grass.png", "src/flower_red.png", "src/flower_yellow.png"]
 
     def __init__(self):
         self.scenery = []
@@ -17,8 +17,8 @@ class Background:
         self.player_area = pygame.Rect(-Background.width//2, -Background.height//2, Background.width, Background.height)
 
         for i in range(-Background.width//2, Background.width//2, 150):
-            sprite1 = Sprite('hedge.png', i, -Background.height // 2)
-            sprite2 = Sprite('hedge.png', i, Background.height // 2)
+            sprite1 = Sprite('src/hedge.png', i, -Background.height // 2)
+            sprite2 = Sprite('src/hedge.png', i, Background.height // 2)
             sprite1.flipped_h = randint(0, 1) == 1
             sprite1.flipped_v = randint(0, 1) == 1
             sprite2.flipped_h = randint(0, 1) == 1
@@ -27,8 +27,8 @@ class Background:
             self.hedges.append(sprite2)
 
         for i in range(-Background.height//2, Background.height//2, 150):
-            sprite1 = Sprite('hedge.png', -Background.width // 2, i)
-            sprite2 = Sprite('hedge.png', Background.width // 2, i)
+            sprite1 = Sprite('src/hedge.png', -Background.width // 2, i)
+            sprite2 = Sprite('src/hedge.png', Background.width // 2, i)
             sprite1.flipped_h = randint(0, 1) == 1
             sprite1.flipped_v = randint(0, 1) == 1
             sprite2.flipped_h = randint(0, 1) == 1

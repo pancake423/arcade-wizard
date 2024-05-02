@@ -1,6 +1,6 @@
-from sprite import Sprite
-from particle import ParticleManager
-from weapon import Weapon
+from src.sprite import Sprite
+from src.particle import ParticleManager
+from src.weapon import Weapon
 from math import sin, cos, dist
 from random import randint
 
