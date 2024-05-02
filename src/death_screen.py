@@ -9,7 +9,6 @@ title = None
 score = None
 button = None
 skull = None
-high_score = 0
 high_score_label = None
 bg = Background()
 
@@ -19,13 +18,14 @@ def init(c, t, raw_score):
     global button
     global target
     global score
-    global high_score
     global high_score_label
     global skull
     new_high_score = False
+    high_score = read_highscore()
     if raw_score > high_score:
         new_high_score = True
         high_score = raw_score
+        write_highscore(high_score)
     title = Label(600, 400, "You Died", 100, True, background_color=(205, 42, 21, 160))
     score = Label(10, 75, f"You survived for: {Shop.time_as_string()}", 50, False, background_color=(0, 0, 0, 64))
     high_score_label = Label(
@@ -43,3 +43,13 @@ def step():
     score.draw(target)
     high_score_label.draw(target)
     button.draw(target)
+
+def read_highscore():
+    high_score = 0
+    with open('src/highscore.txt', "r") as f:
+        high_score = int(f.read())
+    return high_score
+
+def write_highscore(score):
+    with open('src/highscore.txt', 'w') as f:
+        f.write(str(score))
