@@ -95,3 +95,8 @@ class Player(Sprite):
         self.max_x = width // 2
         self.min_y = -height // 2
         self.max_y = height // 2
+
+    def reset(self):
+        self.x_pos = 0
+        self.y_pos = 0
+        self.health = Player.max_health

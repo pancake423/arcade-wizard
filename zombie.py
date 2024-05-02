@@ -117,3 +117,7 @@ class ZombieManager:
         for z in self.zombies:
             z.draw(target, offset_x, offset_y)
         self.particles.draw(target, offset_x, offset_y)
+
+    def reset(self):
+        self.zombies = []
+        self.particles.particles = []

@@ -2,7 +2,7 @@ import pygame
 
 
 class Button:
-    def __init__(self, x, y, w, h, text, color, color_hover, callback):
+    def __init__(self, x, y, w, h, text, color=(54, 141, 249), color_hover=(115, 175, 251), callback=None):
         self.font = pygame.font.Font("basis33.ttf", 75)
         self.body = pygame.Surface((w, h), pygame.SRCALPHA)
         self.body.fill(color)
@@ -27,7 +27,8 @@ class Button:
             if pygame.mouse.get_pressed()[0]:
                 self.primed = True
             elif self.primed:
-                self.callback()
+                if self.callback is not None:
+                    self.callback()
                 self.primed = False
         else:
             self.primed = False

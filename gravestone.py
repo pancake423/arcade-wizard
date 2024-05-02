@@ -86,3 +86,8 @@ class GravestoneManager:
         else:
             self.grave_cooldown = GravestoneManager.grave_freq
             self.random_gravestone()
+
+    def reset(self):
+        self.gravestones = []
+        for _ in range(GravestoneManager.init_graves):
+            self.spawn()

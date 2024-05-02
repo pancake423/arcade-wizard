@@ -66,3 +66,6 @@ class ProjectileManager:
         self.particles.draw(target, offset_x, offset_y)
         for p in self.projectiles:
             p.draw(target, offset_x, offset_y, angle=p.direction)
+
+    def reset(self):
+        self.projectiles = []
