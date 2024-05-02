@@ -1,7 +1,8 @@
 from sprite import Sprite
 from particle import ParticleManager
 from weapon import Weapon
-from math import sin, cos
+from math import sin, cos, dist
+from random import randint
 
 
 class Projectile(Sprite):
@@ -33,6 +34,21 @@ class Projectile(Sprite):
                 self.has_hit.append(z.id)
                 self.pierce_remaining -= 1
                 z.health -= Weapon.damage
+                if Weapon.shock_radius > 0:
+                    for z_shock in zombies.zombies:
+                        distance = dist((self.x, self.y), (z_shock.x, z_shock.y))
+                        if distance <= Weapon.shock_radius:
+                            z.health -= Weapon.shock_damage
+                            self.particles.spawn(
+                                Weapon.particle_type,
+                                z_shock.x + randint(-z_shock.w // 2, z_shock.w // 2),
+                                z_shock.y + randint(-z_shock.h // 2, z_shock.h // 2),
+                                mr=0.1, fadeout=True, lifespan=30
+                            )
+                if Weapon.slow_duration > 0:
+                    z.slow_tick = Weapon.slow_duration
+                if Weapon.burn_duration > 0:
+                    z.fire_tick = Weapon.burn_duration
                 break  # only hit one zombie per frame
 
 

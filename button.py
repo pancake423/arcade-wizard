@@ -16,12 +16,15 @@ class Button:
         self.active = False
         self.primed = False
         self.callback = callback
+        self.locked = False
 
     def draw(self, target):
         target.blit(self.body_hover if self.active else self.body, self.rect)
         target.blit(self.text, self.text_rect)
 
     def update(self):
+        if self.locked:
+            return
         self.active = self.rect.collidepoint(pygame.mouse.get_pos())
         if self.active:
             if pygame.mouse.get_pressed()[0]:
@@ -32,4 +35,8 @@ class Button:
                 self.primed = False
         else:
             self.primed = False
+
+    def lock(self, lock_color=(236, 48, 26)):
+        self.locked = True
+        self.body.fill(lock_color)
 

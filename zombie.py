@@ -4,6 +4,7 @@ from health_bar import HealthBar
 from particle import ParticleManager
 from shop import Shop
 from random import randint, uniform
+from weapon import Weapon
 
 
 class ZombieStats:
@@ -48,6 +49,8 @@ class Zombie(Sprite):
         self.angle = 0
         self.walk_frame = 0
         self.particles = particles
+        self.fire_tick = 0
+        self.slow_tick = 0
         Zombie.id_counter += 1
         super().__init__(self.stats.image, x, y)
 
@@ -56,6 +59,27 @@ class Zombie(Sprite):
         angle = atan2(player.y_pos - self.y, player.x_pos - self.x)
         distance = dist((player.x_pos, player.y_pos), (self.x, self.y))
         move_dist = min(distance, self.stats.speed)
+        if self.slow_tick > 0:
+            self.slow_tick -= 1
+            move_dist *= Weapon.slow_amount
+            if self.slow_tick % Weapon.fire_tickrate == 0:
+                self.particles.spawn(
+                    'particle-ice.png',
+                    self.x + randint(-self.w // 2, self.w // 2),
+                    self.y + randint(-self.h // 2, self.h // 2),
+                    lifespan=30, fadeout=True, mr=0.1
+                )
+
+        if self.fire_tick > 0:
+            self.fire_tick -= 1
+            if self.fire_tick % Weapon.fire_tickrate == 0:
+                self.health -= Weapon.burn_damage
+                self.particles.spawn(
+                    'particle-fire.png',
+                    self.x + randint(-self.w // 2, self.w // 2),
+                    self.y + randint(-self.h // 2, self.h // 2),
+                    lifespan=30, fadeout=True, mr=0.1
+                )
 
         self.x += cos(angle) * move_dist
         self.y += sin(angle) * move_dist

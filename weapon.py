@@ -6,6 +6,13 @@ class Weapon:
     lifespan = 120
     fire_rate = 60
     speed = 15
+    burn_duration = 0
+    burn_damage = 0
+    shock_radius = 0
+    shock_damage = 0
+    slow_duration = 0
+    slow_amount = 1
+    fire_tickrate = 10
 
     @staticmethod
     def reset():
@@ -16,3 +23,9 @@ class Weapon:
         Weapon.lifespan = 120
         Weapon.fire_rate = 60
         Weapon.speed = 15
+        Weapon.burn_duration = 0
+        Weapon.burn_damage = 0
+        Weapon.shock_radius = 0
+        Weapon.shock_damage = 0
+        Weapon.slow_duration = 0
+        Weapon.slow_amount = 1

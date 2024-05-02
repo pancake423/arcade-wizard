@@ -68,8 +68,8 @@ class Shop:
         Shop.buy_damage = Button(500, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.damage)
         Shop.buy_speed = Button(500, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.speed)
         Shop.buy_fire = Button(1050, 350, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.fire)
-        Shop.buy_ice = Button(1050, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), lambda: Shop.ice)
-        Shop.buy_electric = Button(1050, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), lambda: Shop.electric)
+        Shop.buy_ice = Button(1050, 450, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.ice)
+        Shop.buy_electric = Button(1050, 550, 100, 75, "Buy", (54, 141, 249), (115, 175, 251), Shop.electric)
         Shop.pierce_label = Label(100, 350, "Pierce ($200)", fontsize=40)
         Shop.damage_label = Label(100, 450, "Damage ($200)", fontsize=40)
         Shop.speed_label = Label(100, 550, "Speed ($200)", fontsize=40)
@@ -195,6 +195,10 @@ class Shop:
             Shop.fire_label.relabel(f"Fire (${Shop.fire_cost})")
             Weapon.proj_type = 'bolt-fire.png'
             Weapon.particle_type = 'particle-fire.png'
+            Weapon.burn_damage += 1
+            Weapon.burn_duration += 60
+            Shop.buy_electric.lock()
+            Shop.buy_ice.lock()
 
     @staticmethod
     def ice():
@@ -204,6 +208,10 @@ class Shop:
             Shop.ice_label.relabel(f"Ice (${Shop.ice_cost})")
             Weapon.proj_type = 'bolt-ice.png'
             Weapon.particle_type = 'particle-ice.png'
+            Weapon.slow_amount *= 0.8
+            Weapon.slow_duration += 60
+            Shop.buy_fire.lock()
+            Shop.buy_electric.lock()
 
     @staticmethod
     def electric():
@@ -213,5 +221,9 @@ class Shop:
             Shop.electric_label.relabel(f"Electric (${Shop.electric_cost})")
             Weapon.proj_type = 'bolt-electric.png'
             Weapon.particle_type = 'particle-electric.png'
+            Weapon.shock_damage += 3
+            Weapon.shock_radius += 50
+            Shop.buy_fire.lock()
+            Shop.buy_ice.lock()
 
 
