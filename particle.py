@@ -36,7 +36,7 @@ class ParticleManager:
     def spawn(self, image, x, y, mx=0, my=0, mr=0, gravity=False, fadeout=False, lifespan=100):
         self.particles.append(Particle(image, x, y, mx, my, mr, gravity, fadeout, lifespan))
 
-    def draw(self, target, offset_x, offset_y):
+    def draw(self, target, offset_x=0, offset_y=0):
         for p in self.particles:
             p.draw(target, offset_x, offset_y, angle=p.angle, opacity=p.opacity)
 

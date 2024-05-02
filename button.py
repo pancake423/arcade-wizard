@@ -36,7 +36,7 @@ class Button:
         else:
             self.primed = False
 
-    def lock(self, lock_color=(236, 48, 26)):
+    def lock(self, lock_color=(249, 53, 90)):
         self.locked = True
         self.body.fill(lock_color)
 

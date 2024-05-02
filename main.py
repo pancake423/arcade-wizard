@@ -29,11 +29,16 @@ GAME = 1
 RESTART_SCREEN = 2
 
 state = START_SCREEN
+new_state = START_SCREEN
+fade_timer = 0
+fade_surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
 
 def start():
-    global state
-    state = GAME
+    global new_state
+    global fade_timer
+    new_state = GAME
+    fade_timer = 120
 
 
 def draw():
@@ -48,8 +53,10 @@ def draw():
 
 
 def reset():
-    global state
-    state = GAME
+    global new_state
+    new_state = GAME
+    global fade_timer
+    fade_timer = 120
     # todo: call reset functions everywhere
     Shop.init(screen)
     Weapon.reset()
@@ -68,7 +75,7 @@ while running:
             running = False
     if state == START_SCREEN:
         start_screen.step()
-    elif state == GAME:
+    elif state == GAME and fade_timer < 60:
         draw()
         if not Shop.is_open:
             Shop.tick()
@@ -78,12 +85,23 @@ while running:
             graves.update()
             if player.health <= 0:
                 death_screen.init(reset, screen)
-                state = RESTART_SCREEN
+                new_state = RESTART_SCREEN
+                fade_timer = 120
         else:
             Shop.update_shop()
             Shop.draw_shop(screen)
     elif state == RESTART_SCREEN:
         death_screen.step()
+
+    if fade_timer > 0:
+        if fade_timer > 60:
+            fade_surf.fill((0, 0, 0, 255 - 255 * ((fade_timer-60) / 60)))
+        else:
+            fade_surf.fill((0, 0, 0, 255 * (fade_timer / 60)))
+        screen.blit(fade_surf, (0, 0))
+        fade_timer -= 1
+        if fade_timer == 60:
+            state = new_state
 
     pygame.display.flip()
     clock.tick(60)

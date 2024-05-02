@@ -1,5 +1,5 @@
 from sprite import Sprite
-from math import atan2, dist, sin, cos
+from math import atan2, dist, sin, cos, sqrt
 from health_bar import HealthBar
 from particle import ParticleManager
 from shop import Shop
@@ -40,7 +40,7 @@ class Zombie(Sprite):
         if t == "giant":
             return Zombie.giant_stats
 
-    def __init__(self, x, y, t, particles):
+    def __init__(self, x, y, t, particles, scale):
         self.stats = Zombie.get_stats(t)
         self.cooldown = self.stats.atk_cooldown
         self.health = self.stats.health
@@ -51,7 +51,12 @@ class Zombie(Sprite):
         self.particles = particles
         self.fire_tick = 0
         self.slow_tick = 0
+        self.stun_tick = 0
         Zombie.id_counter += 1
+
+        self.health *= scale * scale
+        self.stats.speed *= min(sqrt(scale), 9.5 if t != "baby" else 10.5)
+
         super().__init__(self.stats.image, x, y)
 
     def update(self, player, zombies):
@@ -69,6 +74,9 @@ class Zombie(Sprite):
                     self.y + randint(-self.h // 2, self.h // 2),
                     lifespan=30, fadeout=True, mr=0.1
                 )
+        if self.stun_tick > 0:
+            self.stun_tick -= 1
+            move_dist *= 0.5
 
         if self.fire_tick > 0:
             self.fire_tick -= 1
@@ -118,12 +126,15 @@ class Zombie(Sprite):
 
 
 class ZombieManager:
+
     def __init__(self):
         self.zombies = []
         self.particles = ParticleManager()
+        self.zombie_scale = 1
+        self.zombie_scale_factor = 1.02
 
     def spawn(self, x, y, t):
-        self.zombies.append(Zombie(x, y, t, self.particles))
+        self.zombies.append(Zombie(x, y, t, self.particles, self.zombie_scale))
 
     def update(self, player):
         self.particles.update()
@@ -145,3 +156,8 @@ class ZombieManager:
     def reset(self):
         self.zombies = []
         self.particles.particles = []
+        self.zombie_scale = 1
+
+    def upgrade_zombies(self):
+        self.zombie_scale *= self.zombie_scale_factor
+

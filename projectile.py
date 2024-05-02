@@ -49,6 +49,7 @@ class Projectile(Sprite):
                     z.slow_tick = Weapon.slow_duration
                 if Weapon.burn_duration > 0:
                     z.fire_tick = Weapon.burn_duration
+                z.stun_tick = Weapon.damage + Weapon.burn_damage + Weapon.shock_damage
                 break  # only hit one zombie per frame
 
 
