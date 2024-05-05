@@ -5,6 +5,7 @@ from src.background import Background
 from src.particle import ParticleManager
 from random import randint
 from math import sin
+from src.config import Images
 
 target = None
 title_1 = None
@@ -42,6 +43,6 @@ def step():
 def random_wizard_animation():
     d = -1 if randint(0, 1) == 1 else 1
     height = randint(100, 700)
-    particles.spawn('src/wizard-1.png', -100 if d == 1 else 1300, height, mx=d*9, lifespan=200)
-    particles.spawn('src/zombie-normal.png', -300 if d == 1 else 1500, height+15, mx=d*8, lifespan=200)
+    particles.spawn(Images.wizard_1, -100 if d == 1 else 1300, height, mx=d*9, lifespan=200)
+    particles.spawn(Images.zombie_normal, -300 if d == 1 else 1500, height+15, mx=d*8, lifespan=200)
 

@@ -1,7 +1,7 @@
 import pygame
 from src.sprite import Sprite
 from math import sin, pi, floor, atan2
-from src.weapon import Weapon
+from src.config import Weapon, Images, PlayerSettings
 from src.health_bar import HealthBar
 from src.shop import Shop
 from src.particle import ParticleManager
@@ -9,30 +9,20 @@ from random import randint, uniform
 
 
 class Player:
-    speed = 10
-    max_health = 100
-
-    heal_cooldown = 1800
-    regen_amt = 0.5
-
-    hop_size = 10
-    hop_speed = 0.2
-
-    health_bar_color = (159, 251, 118)
 
     def __init__(self, w, h, bound_w, bound_h, proj):
-        self.sprite = Sprite('src/wizard-1.png', w//2, h//2)
+        self.sprite = Sprite(Images.wizard_1, w//2, h//2)
         self.x_pos = 0
         self.y_pos = 0
         self.center_x = w//2
         self.center_y = h//2
         self.walk_frame = 0
-        self.cycle_length = floor(pi / Player.hop_speed)
+        self.cycle_length = floor(pi / PlayerSettings.hop_speed)
         self.flipped_h = True
         self.proj = proj
         self.fire_cooldown = 0
-        self.health = Player.max_health
-        self.heal_cooldown = Player.heal_cooldown
+        self.health = PlayerSettings.max_health
+        self.heal_cooldown = PlayerSettings.heal_cooldown
         self.center = (w//2, h//2)
         self.particles = ParticleManager()
 
@@ -40,7 +30,7 @@ class Player:
 
     def draw(self, target):
         self.sprite.draw(target)
-        HealthBar.draw(target, self.sprite, 0, 0, self.health / Player.max_health, Player.health_bar_color)
+        HealthBar.draw(target, self.sprite, 0, 0, self.health / PlayerSettings.max_health, PlayerSettings.health_bar_color)
         self.particles.draw(target, self.x_pos - self.center_x, self.y_pos - self.center_y)
 
     def update(self):
@@ -56,8 +46,8 @@ class Player:
         if keys[pygame.K_DOWN] or keys[pygame.K_s]:
             my += 1
         mag = 1.414 if abs(mx) + abs(my) == 2 else 1
-        mx *= Player.speed / mag
-        my *= Player.speed / mag
+        mx *= PlayerSettings.speed / mag
+        my *= PlayerSettings.speed / mag
 
         self.x_pos += mx
         self.y_pos += my
@@ -100,19 +90,19 @@ class Player:
             self.heal_cooldown -= 1
         else:
             if self.health < self.max_health:
-                self.health += Player.regen_amt
+                self.health += PlayerSettings.regen_amt
 
         t = Shop.time_alive
         if t % 60 == 0:
             self.add_sparkle()
         if Shop.time_alive == 60 * 60 * 5:
-            self.set_image("src/wizard-2.png")
+            self.set_image(Images.wizard_2)
             self.survival_buff()
         if Shop.time_alive == 60 * 60 * 10:
-            self.set_image("src/wizard-3.png")
+            self.set_image(Images.wizard_3)
             self.survival_buff()
         if Shop.time_alive == 60 * 60 * 15:
-            self.set_image("src/wizard-4.png")
+            self.set_image(Images.wizard_4)
             self.survival_buff()
         self.particles.update()
 
@@ -126,8 +116,8 @@ class Player:
             Shop.damage_cost -= 50
             Shop.speed_cost -= 50
             Shop.cost_mult -= 0.1
-            Weapon.proj_type = 'src/bolt-secret.png'
-            Weapon.particle_type = 'src/particle-secret.png'
+            Weapon.proj_type = Images.bolt_secret
+            Weapon.particle_type = Images.particle_secret
         self.add_sparkle(50, 10, 90)
         Weapon.damage += 10
         Weapon.pierce += 2
@@ -143,7 +133,7 @@ class Player:
             )
 
     def walk_animate(self, frame):
-        self.sprite.y = self.center_y - abs(sin(frame * Player.hop_speed)) * Player.hop_size
+        self.sprite.y = self.center_y - abs(sin(frame * PlayerSettings.hop_speed)) * PlayerSettings.hop_size
 
     def set_bounds(self, width, height):
         self.min_x = -width // 2
@@ -154,13 +144,13 @@ class Player:
     def reset(self):
         self.x_pos = 0
         self.y_pos = 0
-        self.health = Player.max_health
-        self.set_image('src/wizard-1.png')
+        self.health = PlayerSettings.max_health
+        self.set_image(Images.wizard_1)
         Player.speed = 10
 
     def damage(self, amt):
         self.health -= amt
-        self.heal_cooldown = Player.heal_cooldown
+        self.heal_cooldown = PlayerSettings.heal_cooldown
 
     def set_image(self, image):
         self.sprite = Sprite(image, *self.center)

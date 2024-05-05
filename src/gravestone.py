@@ -1,6 +1,7 @@
 from src.sprite import Sprite
 from src.particle import ParticleManager
 from random import uniform, randint
+from src.config import Images
 
 
 class Gravestone(Sprite):
@@ -16,7 +17,7 @@ class Gravestone(Sprite):
         self.timer = 300  # 5 seconds before zombies start spawning
         self.zombies = zombies
         self.particles = particles
-        super().__init__('src/gravestone.png', x, y)
+        super().__init__(Images.gravestone, x, y)
 
     def update(self):
         if self.timer == 0:
@@ -26,7 +27,7 @@ class Gravestone(Sprite):
             self.timer -= 1
         if self.timer < Gravestone.particle_frames and self.timer % Gravestone.particle_freq == 0:
             self.particles.spawn(
-                'src/dirt_particle.png', self.x + randint(-self.w//2, self.w//2), self.y + randint(0, self.h//2),
+                Images.dirt_particle, self.x + randint(-self.w//2, self.w//2), self.y + randint(0, self.h//2),
                 mx=randint(-2, 2), my=-10, gravity=True, lifespan=30
             )
 

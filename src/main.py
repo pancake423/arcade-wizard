@@ -5,8 +5,7 @@ from src.zombie import ZombieManager
 from src.projectile import ProjectileManager
 from src.gravestone import GravestoneManager
 from src.shop import Shop
-from src.weapon import Weapon
-from src.label import Label
+from src.config import Weapon, Images
 import src.start_screen as start_screen
 import src.death_screen as death_screen
 import src.pause_menu as pause_menu
@@ -18,7 +17,7 @@ WIDTH, HEIGHT = 1200, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption("Wizard Arcade")
-pygame_icon = pygame.image.load('src/wizard-head.png')
+pygame_icon = pygame.image.load(Images.wizard_head)
 pygame.display.set_icon(pygame_icon)
 
 bg = Background()
@@ -76,6 +75,8 @@ pause_menu.init(screen)
 # Main loop
 running = True
 paused = False
+
+
 def main():
     global state
     global running

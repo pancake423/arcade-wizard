@@ -4,42 +4,21 @@ from src.health_bar import HealthBar
 from src.particle import ParticleManager
 from src.shop import Shop
 from random import randint, uniform
-from src.weapon import Weapon
+from src.config import Weapon, Images, ZombieSettings
 from copy import copy
 
 
-class ZombieStats:
-    def __init__(self, image, speed, health, damage, cooldown):
-        self.image = image  # image source for zombie
-        self.speed = speed  # speed in pixels/frame
-        self.health = health  # health
-        self.damage = damage  # damage per attack
-        self.atk_cooldown = cooldown  # number of frames between attacks
-
-
 class Zombie(Sprite):
-    baby_stats = ZombieStats('src/zombie-baby.png', 7, 50, 5, 30)
-    normal_stats = ZombieStats('src/zombie-normal.png', 5, 100, 5, 60)
-    giant_stats = ZombieStats('src/zombie-giant.png', 3, 500, 20, 120)
-
-    bite_radius = 1.5
-    repel_radius = 100
-    repel_force = 0.6
-
     id_counter = 0
-    health_bar_color = (252, 88, 59)
-
-    tilt_speed = 0.01
-    tilt_amount = 0.2
 
     @staticmethod
     def get_stats(t):
         if t == "baby":
-            return copy(Zombie.baby_stats)
+            return copy(ZombieSettings.baby_stats)
         if t == "normal":
-            return copy(Zombie.normal_stats)
+            return copy(ZombieSettings.normal_stats)
         if t == "giant":
-            return copy(Zombie.giant_stats)
+            return copy(ZombieSettings.giant_stats)
 
     def __init__(self, x, y, t, particles, scale=1):
         self.stats = Zombie.get_stats(t)
@@ -71,7 +50,7 @@ class Zombie(Sprite):
             move_dist *= Weapon.slow_amount
             if self.slow_tick % Weapon.fire_tickrate == 0:
                 self.particles.spawn(
-                    'src/particle-ice.png',
+                    Images.particle_ice,
                     self.x + randint(-self.w // 2, self.w // 2),
                     self.y + randint(-self.h // 2, self.h // 2),
                     lifespan=30, fadeout=True, mr=0.1
@@ -85,7 +64,7 @@ class Zombie(Sprite):
             if self.fire_tick % Weapon.fire_tickrate == 0:
                 self.health -= Weapon.burn_damage
                 self.particles.spawn(
-                    'src/particle-fire.png',
+                    Images.particle_fire,
                     self.x + randint(-self.w // 2, self.w // 2),
                     self.y + randint(-self.h // 2, self.h // 2),
                     lifespan=30, fadeout=True, mr=0.1
@@ -95,16 +74,16 @@ class Zombie(Sprite):
         self.y += sin(angle) * move_dist
 
         # zombie tilting animation
-        self.angle = sin(self.walk_frame * self.stats.speed) * Zombie.tilt_amount
-        self.walk_frame += Zombie.tilt_speed
+        self.angle = sin(self.walk_frame * self.stats.speed) * ZombieSettings.tilt_amount
+        self.walk_frame += ZombieSettings.tilt_speed
 
         # attack if in range and cooldown is up
         if self.cooldown > 0:
             self.cooldown -= 1
-        if distance < self.w * Zombie.bite_radius and self.cooldown == 0:
+        if distance < self.w * ZombieSettings.bite_radius and self.cooldown == 0:
             player.damage(self.stats.damage)
             self.particles.spawn(
-                'src/bite-effect.png',
+                Images.bite_effect,
                 player.x_pos + randint(-player.sprite.w//2, player.sprite.w//2), player.y_pos + randint(-player.sprite.h//2, player.sprite.h//2),
                 lifespan=30, fadeout=True
             )
@@ -117,14 +96,14 @@ class Zombie(Sprite):
             distance = dist((self.x, self.y), (z.x, z.y))
             if distance < 50:
                 angle = atan2(self.y - z.y, self.x - z.x)
-                force = (50 - distance) * Zombie.repel_force
+                force = (50 - distance) * ZombieSettings.repel_force
                 self.x += cos(angle) * force
                 self.y += sin(angle) * force
 
 
     def draw(self, target, offset_x=0, offset_y=0):
         super().draw(target, offset_x, offset_y, angle=self.angle)
-        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.max_health, Zombie.health_bar_color)
+        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.max_health, ZombieSettings.health_bar_color)
 
 
 class ZombieManager:

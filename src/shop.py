@@ -1,7 +1,7 @@
 import pygame
 from src.button import Button
 from src.label import Label
-from src.weapon import Weapon
+from src.config import Weapon, Images, Fonts
 from math import ceil
 
 
@@ -56,11 +56,11 @@ class Shop:
         Shop.text = None
 
         Shop.margin = 25
-        Shop.font = pygame.font.Font("src/basis33.ttf", 75)
-        Shop.coin = pygame.image.load("src/coin.png")
+        Shop.font = pygame.font.Font(Fonts.basis, 75)
+        Shop.coin = pygame.image.load(Images.coin)
         Shop.coin = pygame.transform.scale_by(Shop.coin, 0.75)
         Shop.coin_rect = pygame.Rect(Shop.margin, Shop.margin, *Shop.coin.get_size())
-        Shop.clock = pygame.image.load("src/clock.png")
+        Shop.clock = pygame.image.load(Images.clock)
         Shop.clock = pygame.transform.scale_by(Shop.clock, 0.75)
         Shop.clock_rect = pygame.Rect(800, 25, *Shop.clock.get_size())
         Shop.target = target
@@ -211,8 +211,8 @@ class Shop:
             Shop.gold -= Shop.fire_cost
             Shop.fire_cost = Shop.scale_cost(Shop.fire_cost)
             Shop.fire_label.relabel(f"Fire (${Shop.fire_cost})")
-            Weapon.proj_type = 'src/bolt-fire.png'
-            Weapon.particle_type = 'src/particle-fire.png'
+            Weapon.proj_type = Images.bolt_fire
+            Weapon.particle_type = Images.particle_fire
             Weapon.burn_damage += 0.75
             Weapon.burn_duration = 120
             Shop.buy_electric.lock()
@@ -224,8 +224,8 @@ class Shop:
             Shop.gold -= Shop.ice_cost
             Shop.ice_cost = Shop.scale_cost(Shop.ice_cost)
             Shop.ice_label.relabel(f"Ice (${Shop.ice_cost})")
-            Weapon.proj_type = 'src/bolt-ice.png'
-            Weapon.particle_type = 'src/particle-ice.png'
+            Weapon.proj_type = Images.bolt_ice
+            Weapon.particle_type = Images.particle_ice
             Weapon.slow_amount = 0.5
             Weapon.slow_duration += 10
             Shop.buy_fire.lock()
@@ -237,8 +237,8 @@ class Shop:
             Shop.gold -= Shop.electric_cost
             Shop.electric_cost = Shop.scale_cost(Shop.electric_cost)
             Shop.electric_label.relabel(f"Electric (${Shop.electric_cost})")
-            Weapon.proj_type = 'src/bolt-electric.png'
-            Weapon.particle_type = 'src/particle-electric.png'
+            Weapon.proj_type = Images.bolt_electric
+            Weapon.particle_type = Images.particle_electric
             Weapon.shock_damage += 2
             Weapon.shock_radius = 100
             Shop.buy_fire.lock()

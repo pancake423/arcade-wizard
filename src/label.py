@@ -1,4 +1,5 @@
 import pygame
+from src.config import Fonts
 
 
 class Label:
@@ -6,7 +7,7 @@ class Label:
         self.x = x
         self.y = y
         self.centered = centered
-        self.font = pygame.font.Font('src/basis33.ttf', fontsize)
+        self.font = pygame.font.Font(Fonts.basis, fontsize)
         self.surf = self.font.render(text, False, textcolor)
         self.rect = pygame.Rect(0, 0, *self.surf.get_size())
         self.rect.centery = y

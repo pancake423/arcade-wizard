@@ -1,6 +1,6 @@
 from src.sprite import Sprite
 from src.particle import ParticleManager
-from src.weapon import Weapon
+from src.config import Weapon
 from math import sin, cos, dist
 from random import randint
 
