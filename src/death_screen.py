@@ -35,6 +35,7 @@ def init(c, t, raw_score):
     target = t
     skull = Sprite("src/dead-wizard.png", 600, 525)
 
+
 def step():
     bg.draw(target)
     button.update()
@@ -44,11 +45,16 @@ def step():
     high_score_label.draw(target)
     button.draw(target)
 
+
 def read_highscore():
     high_score = 0
-    with open('src/highscore.txt', "r") as f:
-        high_score = int(f.read())
+    try:
+        with open('src/highscore.txt', "r") as f:
+            high_score = int(f.read())
+    except FileNotFoundError:
+        pass  # highscore will just stay zero if no file exists
     return high_score
+
 
 def write_highscore(score):
     with open('src/highscore.txt', 'w') as f:

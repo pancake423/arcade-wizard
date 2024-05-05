@@ -1,6 +1,9 @@
+# Don't save my highscore to the repo :)
+src/highscore.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+#*.py[cod]
 *$py.class
 
 # C extensions
