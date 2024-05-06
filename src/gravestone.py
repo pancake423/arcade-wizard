@@ -41,7 +41,7 @@ class Gravestone(Sprite):
             for i, z in reversed(list(enumerate(self.zombies.zombies))):
                 if z.stats.image == stats.image:
                     add_health = z.max_health
-                    add_speed = z.max_speed / 10
+                    add_speed = z.stats.speed / 10
                     self.zombies.zombies.pop(i)
                     break
             self.zombies.spawn(self.x, self.y, t)

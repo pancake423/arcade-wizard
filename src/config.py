@@ -99,12 +99,14 @@ class ZombieSettings:
     bite_radius = 1.5  # bite radius as a multiple of sprite size
     repel_radius = 100  # maximum repulsion radius in pixels
     repel_force = 0.6  # repulsion force as a fraction of distance
-    active_distance_threshold = 1800  # zombies must be within this distance of the player to move.
+    active_distance_threshold = 2400  # zombies must be within this distance of the player to move.
 
     health_bar_color = (252, 88, 59)
 
     hop_size = 10
     hop_speed = 0.02
+
+    n_move = 20  # number of zombies guaranteed to move every frame
 
 
 class GravestoneSettings:

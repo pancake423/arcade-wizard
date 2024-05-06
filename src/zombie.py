@@ -84,8 +84,6 @@ class Zombie:
     def update(self, player, zombies):
         # walk towards player
         distance = dist((player.x_pos, player.y_pos), (self.x, self.y))
-        if distance > ZombieSettings.active_distance_threshold:
-            return
         angle = atan2(player.y_pos - self.y, player.x_pos - self.x)
         move_dist = min(distance, self.stats.speed)
         if self.slow_tick > 0:
@@ -169,7 +167,12 @@ class ZombieManager:
     def update(self, player):
         self.particles.update()
         need_kill = False
+        n_updated = 0
         for z in self.zombies:
+            distance = dist((player.x_pos, player.y_pos), (z.x, z.y))
+            if distance > ZombieSettings.active_distance_threshold and n_updated > ZombieSettings.n_move:
+                return
+            n_updated += 1
             z.update(player, self.zombies)
             if z.health <= 0:
                 Shop.add_gold(z.stats.health)
