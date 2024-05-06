@@ -1,5 +1,6 @@
 import pygame
 from src.config import Fonts
+import src.mouse_input as mouse_input
 
 class Button:
     def __init__(self, x, y, w, h, text, color=(54, 141, 249), color_hover=(115, 175, 251), callback=None, textcolor="black"):
@@ -25,7 +26,7 @@ class Button:
     def update(self):
         if self.locked:
             return
-        self.active = self.rect.collidepoint(pygame.mouse.get_pos())
+        self.active = self.rect.collidepoint(mouse_input.get_pos())
         if self.active:
             if pygame.mouse.get_pressed()[0]:
                 self.primed = True

@@ -119,11 +119,14 @@ class Zombie:
                 self.y += sin(angle) * force
 
     def walk_animate(self, frame):
-        self.y_draw = abs(sin(frame * ZombieSettings.hop_speed)) * ZombieSettings.hop_size
+        self.y_draw = abs(sin(frame * ZombieSettings.hop_speed * self.stats.speed)) * ZombieSettings.hop_size
 
     def draw(self, target, offset_x=0, offset_y=0):
         self.sprite.draw(target, offset_x - self.x, offset_y - self.y_draw - self.y)
-        HealthBar.draw(target, self, offset_x, offset_y - self.y_draw, self.health / self.max_health, ZombieSettings.health_bar_color)
+        HealthBar.draw(
+            target, self, offset_x, offset_y - self.y_draw,
+            self.health / self.max_health, ZombieSettings.health_bar_color
+        )
 
     def collide_point(self, point):
         return abs(point[0] - self.x) <= self.w // 2 and abs(point[1] - self.y) <= self.h // 2

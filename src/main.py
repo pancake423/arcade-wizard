@@ -9,12 +9,18 @@ from src.config import Weapon, Images
 import src.start_screen as start_screen
 import src.death_screen as death_screen
 import src.pause_menu as pause_menu
+import src.mouse_input as mouse_input
+from src.button import Button
 
 pygame.init()
 
 WIDTH, HEIGHT = 1200, 800
+OUT_WIDTH, OUT_HEIGHT = pygame.display.get_desktop_sizes()[0]
+SCALE_FACTOR = min(OUT_WIDTH / WIDTH, OUT_HEIGHT / HEIGHT)
+OFFSET = ((OUT_WIDTH - WIDTH * SCALE_FACTOR) // 2, (OUT_HEIGHT - HEIGHT * SCALE_FACTOR) // 2)
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+final_scaled = pygame.display.set_mode((OUT_WIDTH, OUT_HEIGHT), pygame.FULLSCREEN)
+screen = pygame.Surface((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption("Wizard Arcade")
 pygame_icon = pygame.image.load(Images.wizard_head)
@@ -35,6 +41,14 @@ state = START_SCREEN
 new_state = START_SCREEN
 fade_timer = 0
 fade_surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+
+quit_button = Button(WIDTH - 100, HEIGHT - 63, 150, 75, "Quit",
+                     callback=quit, textcolor="white", color=(249, 53, 90), color_hover=(251, 114, 138))
+
+
+def quit():
+    global running
+    running = False
 
 
 def start():
@@ -71,6 +85,7 @@ def reset():
 
 start_screen.init(start, screen)
 pause_menu.init(screen)
+mouse_input.init(OFFSET, SCALE_FACTOR)
 
 # Main loop
 running = True
@@ -92,16 +107,20 @@ def main():
                     paused = True
             if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
                 paused = False if paused else True
-            if event.type == pygame.KEYUP and event.key == pygame.K_e:
+            if event.type == pygame.KEYUP and event.key == pygame.K_e and state == GAME:
                 Shop.toggle()
         if state == START_SCREEN:
             start_screen.step()
+            quit_button.update()
+            quit_button.draw(screen)
         elif state == GAME and fade_timer < 60:
             draw()
             if paused:
                 if Shop.is_open:
                     Shop.draw_shop(screen)
                 pause_menu.draw()
+                quit_button.update()
+                quit_button.draw(screen)
             else:
                 if not Shop.is_open:
                     Shop.tick()
@@ -118,6 +137,8 @@ def main():
                     Shop.draw_shop(screen)
         elif state == RESTART_SCREEN:
             death_screen.step()
+            quit_button.update()
+            quit_button.draw(screen)
 
         if fade_timer > 0:
             if fade_timer > 60:
@@ -128,6 +149,10 @@ def main():
             fade_timer -= 1
             if fade_timer == 60:
                 state = new_state
+
+        frame = pygame.transform.scale(screen, (WIDTH*SCALE_FACTOR, HEIGHT*SCALE_FACTOR))
+        final_scaled.fill("black")
+        final_scaled.blit(frame, OFFSET)
 
         pygame.display.flip()
         clock.tick(60)

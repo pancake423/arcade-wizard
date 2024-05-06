@@ -6,6 +6,7 @@ from src.health_bar import HealthBar
 from src.shop import Shop
 from src.particle import ParticleManager
 from random import randint, uniform
+import src.mouse_input as mouse_input
 
 
 class Player:
@@ -86,7 +87,7 @@ class Player:
             self.fire_cooldown -= 1
         if pygame.mouse.get_pressed()[0] and self.fire_cooldown <= 0 and not Shop.shop_button.primed:
             self.fire_cooldown = Weapon.fire_rate
-            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_x, mouse_y = mouse_input.get_pos()
             self.proj.spawn_projectile(self.x_pos, self.y_pos, atan2(mouse_y - self.center_y, mouse_x - self.center_x))
 
         if self.heal_cooldown > 0:

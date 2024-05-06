@@ -99,7 +99,7 @@ class ZombieSettings:
     health_bar_color = (252, 88, 59)
 
     hop_size = 10
-    hop_speed = 0.2
+    hop_speed = 0.02
 
 
 class PlayerSettings:
