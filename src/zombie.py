@@ -171,7 +171,7 @@ class ZombieManager:
         for z in self.zombies:
             distance = dist((player.x_pos, player.y_pos), (z.x, z.y))
             if distance > ZombieSettings.active_distance_threshold and n_updated > ZombieSettings.n_move:
-                return
+                break
             n_updated += 1
             z.update(player, self.zombies)
             if z.health <= 0:

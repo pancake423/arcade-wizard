@@ -118,7 +118,7 @@ class GravestoneSettings:
     particle_frames = 60  # number of frames before spawning a zombie where particles appear
     particle_freq = 5  # particles only appear every [particle_freq] frames.
 
-    max_n_zombies = 100  # maximum number of zombies that can appear on screen before they start upgrading.
+    max_n_zombies = 75  # maximum number of zombies that can appear on screen before they start upgrading.
 
 
 class PlayerSettings:
