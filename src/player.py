@@ -126,6 +126,7 @@ class Player:
         Weapon.damage += 10
         Weapon.pierce += 2
         Weapon.fire_rate *= 0.8
+        self.heal_cooldown = 0
 
     def add_sparkle(self, n=1, speed=0, duration=30):
         for _ in range(n):
