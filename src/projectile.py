@@ -45,11 +45,12 @@ class Projectile(Sprite):
                                 z_shock.y + randint(-z_shock.h // 2, z_shock.h // 2),
                                 mr=0.1, fadeout=True, lifespan=30
                             )
+                            z.stun_tick += Weapon.shock_damage*3
                 if Weapon.slow_duration > 0:
                     z.slow_tick = Weapon.slow_duration
                 if Weapon.burn_duration > 0:
                     z.fire_tick = Weapon.burn_duration
-                z.stun_tick = Weapon.damage + Weapon.burn_damage*3 + Weapon.shock_damage
+                z.stun_tick += Weapon.damage + Weapon.burn_damage*5 + Weapon.shock_damage*3
                 break  # only hit one zombie per frame
 
 

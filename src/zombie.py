@@ -98,7 +98,7 @@ class Zombie:
                 )
         if self.stun_tick > 0:
             self.stun_tick -= 1
-            move_dist *= 0.7
+            move_dist *= 0.65
 
         if self.fire_tick > 0:
             self.fire_tick -= 1
@@ -170,10 +170,9 @@ class ZombieManager:
         n_updated = 0
         for z in self.zombies:
             distance = dist((player.x_pos, player.y_pos), (z.x, z.y))
-            if distance > ZombieSettings.active_distance_threshold and n_updated > ZombieSettings.n_move:
-                break
-            n_updated += 1
-            z.update(player, self.zombies)
+            if distance < ZombieSettings.active_distance_threshold or n_updated < ZombieSettings.n_move:
+                n_updated += 1
+                z.update(player, self.zombies)
             if z.health <= 0:
                 Shop.add_gold(z.stats.health)
                 z.dead = True
