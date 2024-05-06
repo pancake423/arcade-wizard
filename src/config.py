@@ -98,16 +98,16 @@ class ZombieSettings:
 
     health_bar_color = (252, 88, 59)
 
-    tilt_speed = 0.01
-    tilt_amount = 0.2
+    hop_size = 10
+    hop_speed = 0.2
 
 
 class PlayerSettings:
     speed = 10
     max_health = 100
 
-    heal_cooldown = 1800
-    regen_amt = 0.5
+    heal_cooldown = 900
+    regen_amt = 0.1
 
     hop_size = 10
     hop_speed = 0.2

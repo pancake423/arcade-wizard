@@ -30,7 +30,10 @@ class Player:
 
     def draw(self, target):
         self.sprite.draw(target)
-        HealthBar.draw(target, self.sprite, 0, 0, self.health / PlayerSettings.max_health, PlayerSettings.health_bar_color)
+        HealthBar.draw(
+            target, self.sprite, 0, 0,
+            self.health / PlayerSettings.max_health, PlayerSettings.health_bar_color
+        )
         self.particles.draw(target, self.x_pos - self.center_x, self.y_pos - self.center_y)
 
     def update(self):
@@ -89,7 +92,7 @@ class Player:
         if self.heal_cooldown > 0:
             self.heal_cooldown -= 1
         else:
-            if self.health < self.max_health:
+            if self.health < PlayerSettings.max_health:
                 self.health += PlayerSettings.regen_amt
 
         t = Shop.time_alive
@@ -154,4 +157,3 @@ class Player:
 
     def set_image(self, image):
         self.sprite = Sprite(image, *self.center)
-

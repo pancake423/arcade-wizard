@@ -3,12 +3,16 @@ from math import atan2, dist, sin, cos, sqrt
 from src.health_bar import HealthBar
 from src.particle import ParticleManager
 from src.shop import Shop
-from random import randint, uniform
+from random import randint
 from src.config import Weapon, Images, ZombieSettings
 from copy import copy
 
+baby = Sprite(Images.zombie_baby)
+normal = Sprite(Images.zombie_normal)
+giant = Sprite(Images.zombie_giant)
 
-class Zombie(Sprite):
+
+class Zombie:
     id_counter = 0
 
     @staticmethod
@@ -19,6 +23,15 @@ class Zombie(Sprite):
             return copy(ZombieSettings.normal_stats)
         if t == "giant":
             return copy(ZombieSettings.giant_stats)
+
+    @staticmethod
+    def get_sprite(t):
+        if t == "baby":
+            return baby
+        if t == "normal":
+            return normal
+        if t == "giant":
+            return giant
 
     def __init__(self, x, y, t, particles, scale=1):
         self.stats = Zombie.get_stats(t)
@@ -33,12 +46,17 @@ class Zombie(Sprite):
         self.slow_tick = 0
         self.stun_tick = 0
         Zombie.id_counter += 1
+        self.y_draw = 0
+        self.x = x
+        self.y = y
+        self.w = 100
+        self.h = 150
+
+        self.sprite = Zombie.get_sprite(t)
 
         self.health *= scale ** 5
         self.max_health = self.health
         self.stats.speed = min(self.stats.speed * sqrt(scale), 9.5 if t != "baby" else 10.5)
-
-        super().__init__(self.stats.image, x, y)
 
     def update(self, player, zombies):
         # walk towards player
@@ -73,9 +91,8 @@ class Zombie(Sprite):
         self.x += cos(angle) * move_dist
         self.y += sin(angle) * move_dist
 
-        # zombie tilting animation
-        self.angle = sin(self.walk_frame * self.stats.speed) * ZombieSettings.tilt_amount
-        self.walk_frame += ZombieSettings.tilt_speed
+        self.walk_animate(self.walk_frame)
+        self.walk_frame += 1
 
         # attack if in range and cooldown is up
         if self.cooldown > 0:
@@ -84,7 +101,8 @@ class Zombie(Sprite):
             player.damage(self.stats.damage)
             self.particles.spawn(
                 Images.bite_effect,
-                player.x_pos + randint(-player.sprite.w//2, player.sprite.w//2), player.y_pos + randint(-player.sprite.h//2, player.sprite.h//2),
+                player.x_pos + randint(-player.sprite.w//2, player.sprite.w//2),
+                player.y_pos + randint(-player.sprite.h//2, player.sprite.h//2),
                 lifespan=30, fadeout=True
             )
             self.cooldown = self.stats.atk_cooldown
@@ -100,11 +118,15 @@ class Zombie(Sprite):
                 self.x += cos(angle) * force
                 self.y += sin(angle) * force
 
+    def walk_animate(self, frame):
+        self.y_draw = abs(sin(frame * ZombieSettings.hop_speed)) * ZombieSettings.hop_size
 
     def draw(self, target, offset_x=0, offset_y=0):
-        super().draw(target, offset_x, offset_y, angle=self.angle)
-        HealthBar.draw(target, self, offset_x, offset_y, self.health / self.max_health, ZombieSettings.health_bar_color)
+        self.sprite.draw(target, offset_x - self.x, offset_y - self.y_draw - self.y)
+        HealthBar.draw(target, self, offset_x, offset_y - self.y_draw, self.health / self.max_health, ZombieSettings.health_bar_color)
 
+    def collide_point(self, point):
+        return abs(point[0] - self.x) <= self.w // 2 and abs(point[1] - self.y) <= self.h // 2
 
 class ZombieManager:
 
@@ -141,4 +163,3 @@ class ZombieManager:
 
     def upgrade_zombies(self):
         self.zombie_scale *= self.zombie_scale_factor
-
