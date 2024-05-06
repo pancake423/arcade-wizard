@@ -42,11 +42,9 @@ new_state = START_SCREEN
 fade_timer = 0
 fade_surf = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
-quit_button = Button(WIDTH - 100, HEIGHT - 63, 150, 75, "Quit",
-                     callback=quit, textcolor="white", color=(249, 53, 90), color_hover=(251, 114, 138))
 
 
-def quit():
+def quit_loop():
     global running
     running = False
 
@@ -86,6 +84,8 @@ def reset():
 start_screen.init(start, screen)
 pause_menu.init(screen)
 mouse_input.init(OFFSET, SCALE_FACTOR)
+quit_button = Button(WIDTH - 100, HEIGHT - 63, 150, 75, "Quit",
+                     callback=quit_loop, textcolor="white", color=(249, 53, 90), color_hover=(251, 114, 138))
 
 # Main loop
 running = True

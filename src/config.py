@@ -92,14 +92,31 @@ class ZombieSettings:
     normal_stats = ZombieStats(Images.zombie_normal, 5, 100, 5, 60)
     giant_stats = ZombieStats(Images.zombie_giant, 3, 500, 20, 120)
 
-    bite_radius = 1.5
-    repel_radius = 100
-    repel_force = 0.6
+    zombie_scale_factor = 1.02  # controls the rate at which zombies scale every time they upgrade.
+    health_scale_multiplier = 4  # health scales by a factor of [health_scale_multiplier] more than speed.
+    speed_cap = 9.5  # max speed that zombies can reach
+
+    bite_radius = 1.5  # bite radius as a multiple of sprite size
+    repel_radius = 100  # maximum repulsion radius in pixels
+    repel_force = 0.6  # repulsion force as a fraction of distance
+    active_distance_threshold = 1800  # zombies must be within this distance of the player to move.
 
     health_bar_color = (252, 88, 59)
 
     hop_size = 10
     hop_speed = 0.02
+
+
+class GravestoneSettings:
+    spawn_freq = 1080  # number of frames between when new gravestones appear
+    spawn_rng = 120  # variability in spawn time
+    chance_normal = 0.6  # odds of a normal zombie spawning
+    chance_baby = 0.3  # odds of a baby zombie spawning
+    chance_giant = 0.1  # odds of a giant spawning
+    particle_frames = 60  # number of frames before spawning a zombie where particles appear
+    particle_freq = 5  # particles only appear every [particle_freq] frames.
+
+    max_n_zombies = 100  # maximum number of zombies that can appear on screen before they start upgrading.
 
 
 class PlayerSettings:

@@ -1,17 +1,11 @@
 from src.sprite import Sprite
 from src.particle import ParticleManager
 from random import uniform, randint
-from src.config import Images
+from src.config import Images, GravestoneSettings
+from src.zombie import Zombie
 
 
 class Gravestone(Sprite):
-    spawn_freq = 1080
-    spawn_rng = 120
-    chance_normal = 0.6
-    chance_baby = 0.3
-    chance_giant = 0.1
-    particle_frames = 60  # number of frames before spawning a zombie where particles appear
-    particle_freq = 5  # particles only appear every [particle_freq] frames.
 
     def __init__(self, zombies, x, y, particles):
         self.timer = 300  # 5 seconds before zombies start spawning
@@ -21,11 +15,11 @@ class Gravestone(Sprite):
 
     def update(self):
         if self.timer == 0:
-            self.timer = Gravestone.spawn_freq + randint(-Gravestone.spawn_rng, Gravestone.spawn_rng)
+            self.timer = GravestoneSettings.spawn_freq + randint(-GravestoneSettings.spawn_rng, GravestoneSettings.spawn_rng)
             self.spawn()
         if self.timer > 0:
             self.timer -= 1
-        if self.timer < Gravestone.particle_frames and self.timer % Gravestone.particle_freq == 0:
+        if self.timer < GravestoneSettings.particle_frames and self.timer % GravestoneSettings.particle_freq == 0:
             self.particles.spawn(
                 Images.dirt_particle, self.x + randint(-self.w//2, self.w//2), self.y + randint(0, self.h//2),
                 mx=randint(-2, 2), my=-10, gravity=True, lifespan=30
@@ -34,10 +28,24 @@ class Gravestone(Sprite):
     def spawn(self):
         r = uniform(0, 1)
         t = 'normal'
-        if Gravestone.chance_normal < r < Gravestone.chance_baby + Gravestone.chance_normal:
+        if GravestoneSettings.chance_normal < r < GravestoneSettings.chance_baby + GravestoneSettings.chance_normal:
             t = 'baby'
-        elif r > Gravestone.chance_baby + Gravestone.chance_normal:
+        elif r > GravestoneSettings.chance_baby + GravestoneSettings.chance_normal:
             t = 'giant'
+
+        if len(self.zombies.zombies) > GravestoneSettings.max_n_zombies:
+            # find the first zombie of type t, delete it and absorb its stats
+            add_health = 0
+            add_speed = 1
+            stats = Zombie.get_stats(t)
+            for i, z in reversed(list(enumerate(self.zombies.zombies))):
+                if z.stats.image == stats.image:
+                    add_health = z.max_health
+                    add_speed = z.max_speed / 10
+                    self.zombies.zombies.pop(i)
+                    break
+            self.zombies.spawn(self.x, self.y, t)
+            self.zombies.zombies[-1].upgrade_to_super(add_health, add_speed)
         self.zombies.spawn(self.x, self.y, t)
 
 

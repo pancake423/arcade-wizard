@@ -1,15 +1,28 @@
 from src.sprite import Sprite
-from math import atan2, dist, sin, cos, sqrt
+from math import atan2, dist, sin, cos
 from src.health_bar import HealthBar
 from src.particle import ParticleManager
 from src.shop import Shop
 from random import randint
 from src.config import Weapon, Images, ZombieSettings
 from copy import copy
+import pygame
 
 baby = Sprite(Images.zombie_baby)
 normal = Sprite(Images.zombie_normal)
 giant = Sprite(Images.zombie_giant)
+
+
+def make_stacked_image(source_image, n_stacks=1):
+    print(source_image, n_stacks)
+    stack_offset = 25
+    out = pygame.Surface(
+        (source_image.get_width() + stack_offset*n_stacks, source_image.get_height() + stack_offset*n_stacks),
+        pygame.SRCALPHA
+    )
+    for i in range(n_stacks):
+        out.blit(source_image, (i*stack_offset, i*stack_offset))
+    return out
 
 
 class Zombie:
@@ -49,19 +62,31 @@ class Zombie:
         self.y_draw = 0
         self.x = x
         self.y = y
-        self.w = 100
-        self.h = 150
 
         self.sprite = Zombie.get_sprite(t)
+        self.stacks=1
 
-        self.health *= scale ** 5
+        self.w = self.sprite.w
+        self.h = self.sprite.h
+
+        self.health *= scale ** ZombieSettings.health_scale_multiplier
         self.max_health = self.health
-        self.stats.speed = min(self.stats.speed * sqrt(scale), 9.5 if t != "baby" else 10.5)
+        self.stats.speed = min(self.stats.speed * scale, ZombieSettings.speed_cap)
+
+    def upgrade_to_super(self, extra_health, extra_speed):
+        self.stacks += 1
+        self.max_health += extra_health
+        self.health = self.max_health
+        self.stats.speed = min(self.stats.speed + extra_speed, ZombieSettings.speed_cap)
+        new_img = make_stacked_image(self.sprite.surf, self.stacks)
+        self.sprite = Sprite(new_img, 0, 0)
 
     def update(self, player, zombies):
         # walk towards player
-        angle = atan2(player.y_pos - self.y, player.x_pos - self.x)
         distance = dist((player.x_pos, player.y_pos), (self.x, self.y))
+        if distance > ZombieSettings.active_distance_threshold:
+            return
+        angle = atan2(player.y_pos - self.y, player.x_pos - self.x)
         move_dist = min(distance, self.stats.speed)
         if self.slow_tick > 0:
             self.slow_tick -= 1
@@ -112,9 +137,9 @@ class Zombie:
             if z.id == self.id:
                 continue
             distance = dist((self.x, self.y), (z.x, z.y))
-            if distance < 50:
+            if distance < ZombieSettings.repel_radius:
                 angle = atan2(self.y - z.y, self.x - z.x)
-                force = (50 - distance) * ZombieSettings.repel_force
+                force = (ZombieSettings.repel_radius - distance) * ZombieSettings.repel_force
                 self.x += cos(angle) * force
                 self.y += sin(angle) * force
 
@@ -131,13 +156,12 @@ class Zombie:
     def collide_point(self, point):
         return abs(point[0] - self.x) <= self.w // 2 and abs(point[1] - self.y) <= self.h // 2
 
-class ZombieManager:
 
+class ZombieManager:
     def __init__(self):
         self.zombies = []
         self.particles = ParticleManager()
         self.zombie_scale = 1
-        self.zombie_scale_factor = 1.02
 
     def spawn(self, x, y, t):
         self.zombies.append(Zombie(x, y, t, self.particles, self.zombie_scale))
@@ -165,4 +189,4 @@ class ZombieManager:
         self.zombie_scale = 1
 
     def upgrade_zombies(self):
-        self.zombie_scale *= self.zombie_scale_factor
+        self.zombie_scale *= ZombieSettings.zombie_scale_factor
